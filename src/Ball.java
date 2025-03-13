@@ -95,7 +95,7 @@ public class Ball extends DynamicShape {
             double cos = Math.cos(Math.toRadians(this.angle) + Math.PI/2);
             double sin = Math.sin(Math.toRadians(this.angle) + Math.PI/2);
             float ratio = (1f - (float) this.cooldown /this.maxCooldown);
-            pGraphics.drawLine((int) this.getCenterX(), (int) this.getCenterY(), ((int) ((this.getWidth() * 7.5 * ratio) * -cos + this.getCenterX())), ((int) ((this.getWidth() * 7.5 * ratio) * -sin + this.getCenterY())));
+            pGraphics.drawLine((int) this.getCenterX(), (int) this.getCenterY(), ((int) ((this.getWidth() * 3 * ratio) * -cos + this.getCenterX())), ((int) ((this.getWidth() * 3 * ratio) * -sin + this.getCenterY())));
         }
         pGraphics.fillOval(((int) this.getX()), ((int) this.getY()), this.getWidth(), this.getHeight());
     }
@@ -299,6 +299,7 @@ public class Ball extends DynamicShape {
         } else {
             ball.setAngle(20 + (random.nextDouble() * 140));
         }
+        ball.setCooldown(Pong.TPS*2);
         return ball;
     }
 

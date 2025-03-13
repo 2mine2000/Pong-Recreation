@@ -8,7 +8,7 @@ public class Pong extends JPanel implements Runnable {
         new Pong();
     }
     public static final int TPS = 60;
-    public static final int WALL_SICKNESS = 5;
+    public static int WALL_THICKNESS;
     private static Pong instance;
     public final ArrayList<Wall> walls = new ArrayList<>();
     private final KeyHandler keyHandler;
@@ -35,18 +35,19 @@ public class Pong extends JPanel implements Runnable {
         this.setBackground(Color.BLACK);
         this.keyHandler = new KeyHandler();
         this.addKeyListener(this.keyHandler);
+        WALL_THICKNESS = (int) (Pong.getInstance().getHeight() / 771f * 5);
         this.init();
         this.start();
     }
 
     public void init() {
         this.ball = Ball.spawn();
-        Wall.create(0, 0, this.getWidth(), WALL_SICKNESS);
-        Wall.create(0, this.getHeight() - WALL_SICKNESS, this.getWidth(), WALL_SICKNESS);
-        Wall.create(0, 0, WALL_SICKNESS, this.getHeight()/5);
-        Wall.create(0, (float) (this.getHeight() * 4) /5 , WALL_SICKNESS, this.getHeight()/5);
-        Wall.create(this.getWidth() - WALL_SICKNESS, 0, WALL_SICKNESS, this.getHeight()/5);
-        Wall.create(this.getWidth() - WALL_SICKNESS, (float) (this.getHeight() * 4) /5 , WALL_SICKNESS, this.getHeight()/5);
+        Wall.create(0, 0, this.getWidth(), WALL_THICKNESS);
+        Wall.create(0, this.getHeight() - WALL_THICKNESS, this.getWidth(), WALL_THICKNESS);
+        Wall.create(0, 0, WALL_THICKNESS, this.getHeight()/5);
+        Wall.create(0, (float) (this.getHeight() * 4) /5 , WALL_THICKNESS, this.getHeight()/5);
+        Wall.create(this.getWidth() - WALL_THICKNESS, 0, WALL_THICKNESS, this.getHeight()/5);
+        Wall.create(this.getWidth() - WALL_THICKNESS, (float) (this.getHeight() * 4) /5 , WALL_THICKNESS, this.getHeight()/5);
         //Wall.create(0, (float) Pong.getInstance().getHeight() /5, WALL_SICKNESS, Pong.getInstance().getHeight()/5 * 3, Color.ORANGE);
         //Wall.create(Pong.getInstance().getWidth() - WALL_SICKNESS, (float) Pong.getInstance().getHeight() /5, WALL_SICKNESS, Pong.getInstance().getHeight()/5 * 3, Color.ORANGE);
         Player.create((float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_Z || key == KeyEvent.VK_W || key == KeyEvent.VK_Q || key == KeyEvent.VK_A, (key)-> key == KeyEvent.VK_S || key == KeyEvent.VK_D);
