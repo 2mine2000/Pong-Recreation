@@ -42,7 +42,7 @@ public class Player extends Wall {
     @Override
     public void draw(Graphics2D pGraphics) {
         pGraphics.setColor(Color.DARK_GRAY);
-        float startY = Pong.WALL_SICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2;
+        float startY = Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2;
         pGraphics.fillRect((int) this.getCenterX(), (int) startY, 1, (int) ((this.spawnY+this.getHeight()/2 - startY)*2));
         pGraphics.fillRect((int) this.getX(), (int) startY, this.getWidth(), 1);
         pGraphics.fillOval((int) this.getX()+this.getWidth()/4, (int) this.spawnY + this.getHeight()/2-this.getWidth()/4, this.getWidth()/2, this.getWidth()/2);
@@ -51,7 +51,7 @@ public class Player extends Wall {
     }
 
     public void tryGoingUp() {
-        if (this.getY() - SPEED > Pong.WALL_SICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2) {
+        if (this.getY() - SPEED > Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2) {
             this.moving = "Up";
             this.move(0, -SPEED);
             Ball ball = Pong.getInstance().ball;
@@ -70,7 +70,7 @@ public class Player extends Wall {
     }
 
     public void tryGoingDown() {
-        if (this.getEndY() + SPEED < Pong.getInstance().getHeight() - Pong.WALL_SICKNESS - Pong.getInstance().ball.getHeight() - Pong.getInstance().getHeight() / 771f*2) {
+        if (this.getEndY() + SPEED < Pong.getInstance().getHeight() - Pong.WALL_THICKNESS - Pong.getInstance().ball.getHeight() - Pong.getInstance().getHeight() / 771f*2) {
             this.moving = "Down";
             this.move(0, SPEED);
             Ball ball = Pong.getInstance().ball;
