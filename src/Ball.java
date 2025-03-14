@@ -15,6 +15,7 @@ public class Ball extends DynamicShape {
     private double angle = 0;
     private int maxCooldown = 0;
     private int cooldown = 0;
+    private final boolean chaotic;
     private String goal = "";
     private final int power;
 
@@ -22,13 +23,14 @@ public class Ball extends DynamicShape {
         this(Color.WHITE, Color.WHITE, 1);
     }
     private Ball(Color pColor, Color pLastColor, int pPower) {
-        this((int) (Pong.getInstance().getHeight() / 77.1f * 2), pColor, pLastColor, pPower);
+        this((int) (Pong.getInstance().getHeight() / 77.1f * 2), pColor, pLastColor, pPower, false);
     }
 
-    private Ball(int pSize, Color pColor, Color pLastColor, int pPower) {
+    private Ball(int pSize, Color pColor, Color pLastColor, int pPower, boolean pChaotic) {
         super(pSize, pSize, pColor);
         this.lastColor = pLastColor;
         this.power = pPower;
+        this.chaotic = pChaotic;
     }
 
     @Override
@@ -47,7 +49,7 @@ public class Ball extends DynamicShape {
             this.cooldown--;
         }else {
             this.maxCooldown = 0;
-            if (this.getWidth() == Pong.getInstance().getHeight() / 77.1f * 10 && Math.random() < Math.random()/25) {
+            if (this.chaotic && Math.random() < Math.random()/25) {
                 this.setAngle(this.getAngle() + Math.random() * 360);
                 this.setBoost((float) (Math.random() - (this.getSpeed() > Pong.getInstance().getHeight() / 77.1f * 2 ? 0.2 : 0) * Pong.getInstance().getHeight() / 77.1f * 2), (int) (Math.random() * Pong.TPS / (Math.random()+0.00001)*2));
             }
@@ -143,7 +145,7 @@ public class Ball extends DynamicShape {
     }
 
     public Ball getDuplicate() {
-        Ball ball = new Ball(this.getWidth(), this.getColor(), this.lastColor, this.power);
+        Ball ball = new Ball(this.getWidth(), this.getColor(), this.lastColor, this.power, this.chaotic);
         ball.relocate(this.getX(), this.getY());
         ball.setAngle(this.angle);
         ball.setSpeed(this.speed);
@@ -262,7 +264,7 @@ public class Ball extends DynamicShape {
         boolean chaoticBall = val < 0.01;
         Ball ball;
         if (chaoticBall) {
-            ball = new Ball((int) (Pong.getInstance().getHeight() / 77.1f * 10), new Color(0, 255, 0), pLastColor, -1);
+            ball = new Ball((int) (Pong.getInstance().getHeight() / 77.1f * 10), new Color(0, 255, 0), pLastColor, -1, true);
         }else if (outragedBall) {
             ball = new Ball(new Color(200, 0, 255), pLastColor, 3);
         }else if (enragedBall) {

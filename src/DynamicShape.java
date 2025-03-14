@@ -70,11 +70,11 @@ public abstract class DynamicShape {
     }
 
     public float getCenterX() {
-        return this.getX() + (float) this.getWidth() / 2;
+        return this.getX() + (float) (this.getWidth() / 2);
     }
 
     public float getCenterY() {
-        return this.getY() + (float) this.getHeight() / 2;
+        return this.getY() + (float) (this.getHeight() / 2);
     }
 
     public void setColor(Color pColor) {

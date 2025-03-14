@@ -43,10 +43,11 @@ public class Player extends Wall {
     public void draw(Graphics2D pGraphics) {
         pGraphics.setColor(Color.DARK_GRAY);
         float startY = Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2;
-        pGraphics.fillRect((int) this.getCenterX(), (int) startY, 1, (int) ((this.spawnY+this.getHeight()/2 - startY)*2));
+        float endY = Pong.getInstance().getHeight() - (Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2);
+        pGraphics.drawLine((int) this.getCenterX(), (int) startY, (int) this.getCenterX(), (int) endY);
         pGraphics.fillRect((int) this.getX(), (int) startY, this.getWidth(), 1);
-        pGraphics.fillOval((int) this.getX()+this.getWidth()/4, (int) this.spawnY + this.getHeight()/2-this.getWidth()/4, this.getWidth()/2, this.getWidth()/2);
-        pGraphics.fillRect((int) this.getX(), (int) (startY + ((this.spawnY+this.getHeight()/2 - startY)*2) - Pong.getInstance().getHeight() / 771f*2), this.getWidth(), 1);
+        pGraphics.fillOval((int) (this.getCenterX() - this.getWidth()/4f), (int) (this.spawnY + this.getHeight()/2f-this.getWidth()/4f), (int) (this.getWidth()/2f), (int) (this.getWidth()/2f));
+        pGraphics.fillRect((int) this.getX(), (int) endY, this.getWidth(), 1);
         super.draw(pGraphics);
     }
 
