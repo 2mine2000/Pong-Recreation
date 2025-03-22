@@ -1,3 +1,8 @@
+package pong.shapes;
+
+import pong.Pong;
+import pong.PongGraphics;
+
 import java.awt.*;
 
 public class Wall extends DynamicShape {
@@ -7,16 +12,16 @@ public class Wall extends DynamicShape {
     }
 
     @Override
-    void tick() {
+    public void tick() {
 
     }
 
 
 
     @Override
-    public void draw(Graphics2D pGraphics) {
+    public void draw(PongGraphics pGraphics) {
         super.draw(pGraphics);
-        pGraphics.fillRect((int) this.getX(), (int) this.getY(), this.getWidth(), this.getHeight());
+        pGraphics.g.fillRect((int) this.getX(), (int) this.getY(), this.getWidth(), this.getHeight());
     }
 
     public static void create(int pWidth, int pHeight) {

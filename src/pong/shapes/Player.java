@@ -1,3 +1,8 @@
+package pong.shapes;
+
+import pong.Pong;
+import pong.PongGraphics;
+
 import java.awt.*;
 import java.util.function.Function;
 
@@ -21,7 +26,7 @@ public class Player extends Wall {
     }
 
     private Player(boolean pPlayable, float pX, float pY, Color pColor, Function<Integer ,Boolean> pIsUp, Function<Integer ,Boolean> pIsDown) {
-        super(pX, pY, (int) (Pong.getInstance().getHeight() / 77.1f * 2), (int) (Pong.getInstance().getHeight() / 77.1f * 15), pColor);
+        super(pX, pY, (int) Pong.pixel(20), (int) Pong.pixel(150), pColor);
         this.playable = pPlayable;
         this.spawnY = pY;
         this.isUp = pIsUp;
@@ -29,7 +34,7 @@ public class Player extends Wall {
     }
 
     @Override
-    void tick() {
+    public void tick() {
         if (this.playable) {
             if (this.up != this.down) {
                 if (this.up) {
@@ -40,14 +45,14 @@ public class Player extends Wall {
     }
 
     @Override
-    public void draw(Graphics2D pGraphics) {
+    public void draw(PongGraphics pGraphics) {
         pGraphics.setColor(Color.DARK_GRAY);
-        float startY = Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2;
-        float endY = Pong.getInstance().getHeight() - (Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2);
-        pGraphics.drawLine((int) this.getCenterX(), (int) startY, (int) this.getCenterX(), (int) endY);
-        pGraphics.fillRect((int) this.getX(), (int) startY, this.getWidth(), 1);
-        pGraphics.fillOval((int) (this.getCenterX() - this.getWidth()/4f), (int) (this.spawnY + this.getHeight()/2f-this.getWidth()/4f), (int) (this.getWidth()/2f), (int) (this.getWidth()/2f));
-        pGraphics.fillRect((int) this.getX(), (int) endY, this.getWidth(), 1);
+        float startY = Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.pixel(2);
+        float endY = Pong.getInstance().getHeight() - (Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.pixel(2));
+        pGraphics.g.drawLine((int) this.getCenterX(), (int) startY, (int) this.getCenterX(), (int) endY);
+        pGraphics.g.fillRect((int) this.getX(), (int) startY, this.getWidth(), 1);
+        pGraphics.g.fillOval((int) (this.getCenterX() - this.getWidth()/4f), (int) (this.spawnY + this.getHeight()/2f-this.getWidth()/4f), (int) (this.getWidth()/2f), (int) (this.getWidth()/2f));
+        pGraphics.g.fillRect((int) this.getX(), (int) endY, this.getWidth(), 1);
         super.draw(pGraphics);
     }
 

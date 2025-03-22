@@ -1,4 +1,10 @@
+package pong.shapes;
+
+import pong.Pong;
+import pong.PongGraphics;
+
 import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class DynamicShape {
     private float x;
@@ -25,9 +31,9 @@ public abstract class DynamicShape {
         this.color = pColor;
     }
 
-    abstract void tick();
+    public abstract void tick();
 
-    public void draw(Graphics2D pGraphics) {
+    public void draw(PongGraphics pGraphics) {
         pGraphics.setColor(this.color);
     }
 
@@ -95,5 +101,11 @@ public abstract class DynamicShape {
 
     public Rectangle getCollisionBox() {
         return new Rectangle((int) this.getX(), (int) this.getY(), this.getWidth(), this.getHeight());
+    }
+
+    public static <T extends DynamicShape> void tickAll(ArrayList<T> pShapes) {
+        for (T shape : pShapes) {
+            shape.tick();
+        }
     }
 }
