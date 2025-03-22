@@ -31,6 +31,9 @@ public class KeyHandler implements KeyListener {
         if (e.getKeyChar() == '1') {
             pong.startNewGame();
         }
+        if (e.getKeyChar() == '9') {
+            pong.quit();
+        }
     }
 
     @Override

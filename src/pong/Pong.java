@@ -1,10 +1,7 @@
 package pong;
 
 import pong.shapes.*;
-import pong.shapes.buttons.MainMenuButton;
-import pong.shapes.buttons.MenuButton;
-import pong.shapes.buttons.PlayButton;
-import pong.shapes.buttons.ResumeButton;
+import pong.shapes.buttons.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -82,7 +79,8 @@ public class Pong extends JPanel implements Runnable {
         Wall.create(0, (float) (this.getHeight() * 4) /5 , WALL_THICKNESS, this.getHeight()/5);
         Wall.create(this.getWidth() - WALL_THICKNESS, 0, WALL_THICKNESS, this.getHeight()/5);
         Wall.create(this.getWidth() - WALL_THICKNESS, (float) (this.getHeight() * 4) /5 , WALL_THICKNESS, this.getHeight()/5);
-        PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(50), (int) pixel(400), (int) pixel(100), Color.GREEN, new Color(200, 255, 200), LightSide.TOP_LEFT, "Play", new Font("Dialog.plain", Font.BOLD, (int) pixel(40)));
+        PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(5), (int) pixel(400), (int) pixel(90), Color.GREEN, new Color(200, 255, 200), LightSide.TOP_LEFT, "Play", new Font("Dialog.plain", Font.BOLD, (int) pixel(40)));
+        QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(125), (int) pixel(200), (int) pixel(75), Color.RED, new Color(255, 200, 200), LightSide.TOP_LEFT, "Quit", null);
         ResumeButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(37.5f), (int) pixel(300), (int) pixel(75), Color.GREEN, new Color(200, 255, 200), LightSide.TOP_LEFT, "Resume", null);
         MainMenuButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(125), (int) pixel(300), (int) pixel(75), Color.RED, new Color(255, 200, 200), LightSide.TOP_LEFT, "Main menu", null);
         Player.create((float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_Z || key == KeyEvent.VK_W || key == KeyEvent.VK_Q || key == KeyEvent.VK_A, (key)-> key == KeyEvent.VK_S || key == KeyEvent.VK_D);
@@ -149,7 +147,7 @@ public class Pong extends JPanel implements Runnable {
             pGraphics.setColor(Color.WHITE);
             pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/5));
             FontMetrics metrics = pGraphics.g.getFontMetrics();
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/5f);
+            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/4f);
         }
 
         if (this.gameState == PAUSED || this.gameState == MAIN_MENU) {
@@ -270,6 +268,11 @@ public class Pong extends JPanel implements Runnable {
             this.setCursor(HIDDEN_CURSOR);
             return true;
         }return false;
+    }
+
+    public void quit() {
+        this.window.dispose();
+        System.exit(0);
     }
 
     public static float pixel() {

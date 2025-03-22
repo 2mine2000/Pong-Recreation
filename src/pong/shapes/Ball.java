@@ -306,7 +306,7 @@ public class Ball extends DynamicShape {
         } else {
             ball.setAngle(20 + (random.nextDouble() * 140));
         }
-        ball.setCooldown(Pong.TPS*2);
+        ball.setCooldown(Pong.TPS*3);
         return ball;
     }
 }
