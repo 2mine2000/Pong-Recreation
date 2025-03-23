@@ -16,6 +16,7 @@ public abstract class MenuButton extends DynamicShape {
     protected boolean active = false;
     protected final String text;
     protected final Font font;
+    protected boolean selected = false;
 
     protected MenuButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.LightSide pLightSide, String pText, Font pFont) {
         super(pX, pY, pWidth, pHeight, pColor);
@@ -29,7 +30,7 @@ public abstract class MenuButton extends DynamicShape {
 
     @Override
     public void tick() {
-        if (this.active && !isMouseOver()) {
+        if (this.active && !this.shouldBeBright()) {
             this.active = false;
         }
     }
@@ -90,6 +91,18 @@ public abstract class MenuButton extends DynamicShape {
 
     public void setActiveState(boolean pActive) {
         this.active = pActive;
+    }
+
+    public boolean isSelected() {
+        return this.selected;
+    }
+
+    public void setSelected(boolean pSelected) {
+        this.selected = pSelected;
+    }
+
+    public boolean shouldBeBright() {
+        return this.selected || (this.isMouseOver() && Pong.getInstance().getCursor() != Pong.HIDDEN_CURSOR);
     }
 
     public static <T extends MenuButton> void register(T pButton) {

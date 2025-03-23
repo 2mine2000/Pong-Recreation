@@ -1,5 +1,8 @@
 package pong;
 
+import pong.handlers.KeyHandler;
+import pong.handlers.MouseHandler;
+import pong.handlers.MouseMotionHandler;
 import pong.shapes.*;
 import pong.shapes.buttons.*;
 
@@ -28,6 +31,7 @@ public class Pong extends JPanel implements Runnable {
     public final ArrayList<MenuButton> buttons = new ArrayList<>();
     private final KeyHandler keyHandler;
     private final MouseHandler mouseHandler;
+    private final MouseMotionHandler mouseMotionHandler;
     private Thread gameThread;
     public Ball ball;
     public final ArrayList<Player> players = new ArrayList<>();
@@ -62,9 +66,11 @@ public class Pong extends JPanel implements Runnable {
         this.setBackground(Color.BLACK);
         this.keyHandler = new KeyHandler();
         this.mouseHandler = new MouseHandler();
+        this.mouseMotionHandler = new MouseMotionHandler();
         DEFAULT_CURSOR = this.getCursor();
         this.addKeyListener(this.keyHandler);
         this.addMouseListener(this.mouseHandler);
+        this.addMouseMotionListener(this.mouseMotionHandler);
         this.setCursor(DEFAULT_CURSOR);
         this.init();
         this.start();
@@ -137,17 +143,25 @@ public class Pong extends JPanel implements Runnable {
             FontMetrics metrics = pGraphics.g.getFontMetrics();
             pGraphics.g.drawString("Paused", this.getWidth()/2f - metrics.stringWidth("Paused")/2f, this.getHeight()/2f - pixel(37.5f));
 
-            pGraphics.setColor(Color.WHITE);
             pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/5));
             metrics = pGraphics.g.getFontMetrics();
+            pGraphics.setColor(Color.DARK_GRAY);
+            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3f+pixel(20));
+            pGraphics.setColor(Color.GRAY);
+            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3f+pixel(10));
+            pGraphics.setColor(Color.WHITE);
             pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3f);
         }
 
         if (this.gameState == MAIN_MENU) {
-            pGraphics.setColor(Color.WHITE);
             pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/5));
             FontMetrics metrics = pGraphics.g.getFontMetrics();
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/4f);
+            pGraphics.setColor(Color.DARK_GRAY);
+            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3.25f + pixel(20));
+            pGraphics.setColor(Color.GRAY);
+            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3.25f + pixel(10));
+            pGraphics.setColor(Color.WHITE);
+            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3.25f);
         }
 
         if (this.gameState == PAUSED || this.gameState == MAIN_MENU) {
@@ -160,7 +174,6 @@ public class Pong extends JPanel implements Runnable {
                 pGraphics.setColor(new Color(0, 0, 0, ratio));
             }else pGraphics.setColor(Color.BLACK);
             pGraphics.g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
         }
     }
 
@@ -275,6 +288,13 @@ public class Pong extends JPanel implements Runnable {
         System.exit(0);
     }
 
+    public boolean updateCursor(Cursor pCursor) {
+        if (this.getCursor() != pCursor) {
+            this.setCursor(pCursor);
+            return true;
+        }return false;
+    }
+
     public static float pixel() {
         return pixel(1f);
     }
@@ -282,6 +302,7 @@ public class Pong extends JPanel implements Runnable {
     public static float pixel(float pCount) {
         return PIXEL * pCount;
     }
+
 
     public enum LightSide {
         TOP_LEFT,

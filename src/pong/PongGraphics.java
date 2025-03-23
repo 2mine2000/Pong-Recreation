@@ -51,9 +51,9 @@ public class PongGraphics {
     }
 
     public void drawButton(MenuButton pButton) {
-        if (Pong.getInstance().gameState == Pong.MAIN_MENU && Pong.getInstance().fadeInCooldown > 0) {
+        /*if (Pong.getInstance().gameState == Pong.MAIN_MENU && Pong.getInstance().fadeInCooldown > 0) {
             this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.isActive()?20:25));
-        }else this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.isMouseOver()?(pButton.isActive()?45:60):(pButton.isActive()?20:25)));
+        }else */this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.shouldBeBright()?(pButton.isActive()?45:60):(pButton.isActive()?20:25)));
         this.g.fill(pButton.getCollisionBox());
         if (pButton.isActive()) {
             this.drawShadowedRectangle(pButton.getCollisionBox(), pButton.getShadowColor(), pButton.getLightColor(), pButton.getLightSide());

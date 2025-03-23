@@ -1,5 +1,6 @@
-package pong;
+package pong.handlers;
 
+import pong.Pong;
 import pong.shapes.buttons.MenuButton;
 
 import java.awt.event.MouseEvent;
@@ -13,11 +14,18 @@ public class MouseHandler implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (Pong.getInstance().gameState != Pong.MAIN_MENU || Pong.getInstance().fadeInCooldown <= 0) {
-            for (MenuButton button : Pong.getInstance().buttons) {
-                if (button.isVisible(Pong.getInstance().gameState)) {
-                    button.setActiveState(button.isMouseOver());
+        Pong pong = Pong.getInstance();
+        if (pong.isMenuOpen()) {
+            pong.updateCursor(Pong.DEFAULT_CURSOR);
+            for (MenuButton button : pong.buttons) {
+                if (button.isSelected()) {
+                    button.setSelected(false);
                 }
+            }
+        }
+        for (MenuButton button : pong.buttons) {
+            if (button.isVisible(pong.gameState)) {
+                button.setActiveState(button.isMouseOver());
             }
         }
     }
@@ -41,4 +49,6 @@ public class MouseHandler implements MouseListener {
     public void mouseExited(MouseEvent e) {
 
     }
+
+
 }
