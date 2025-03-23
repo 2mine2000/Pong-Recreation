@@ -52,7 +52,7 @@ public class Pong extends JPanel implements Runnable {
             this.robot = null;
         }
         instance = this;
-        this.window = new JFrame("net.l2mine2000.pong.Pong");
+        this.window = new JFrame("Pong Remake");
         this.window.setLocationRelativeTo(null);
         this.window.setVisible(true);
         this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
