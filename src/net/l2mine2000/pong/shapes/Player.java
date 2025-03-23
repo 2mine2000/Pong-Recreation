@@ -1,7 +1,7 @@
-package pong.shapes;
+package net.l2mine2000.pong.shapes;
 
-import pong.Pong;
-import pong.PongGraphics;
+import net.l2mine2000.pong.Pong;
+import net.l2mine2000.pong.PongGraphics;
 
 import java.awt.*;
 import java.util.function.Function;

@@ -1,6 +1,6 @@
-package pong.shapes.buttons;
+package net.l2mine2000.pong.shapes.buttons;
 
-import pong.Pong;
+import net.l2mine2000.pong.Pong;
 
 import java.awt.*;
 

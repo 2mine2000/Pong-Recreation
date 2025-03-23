@@ -1,8 +1,8 @@
-package pong.handlers;
+package net.l2mine2000.pong.handlers;
 
-import pong.Pong;
-import pong.shapes.Player;
-import pong.shapes.buttons.MenuButton;
+import net.l2mine2000.pong.Pong;
+import net.l2mine2000.pong.shapes.Player;
+import net.l2mine2000.pong.shapes.buttons.MenuButton;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

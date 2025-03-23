@@ -1,10 +1,13 @@
-package pong;
+package net.l2mine2000.pong;
 
-import pong.handlers.KeyHandler;
-import pong.handlers.MouseHandler;
-import pong.handlers.MouseMotionHandler;
-import pong.shapes.*;
-import pong.shapes.buttons.*;
+import net.l2mine2000.pong.handlers.KeyHandler;
+import net.l2mine2000.pong.handlers.MouseHandler;
+import net.l2mine2000.pong.handlers.MouseMotionHandler;
+import net.l2mine2000.pong.shapes.Ball;
+import net.l2mine2000.pong.shapes.DynamicShape;
+import net.l2mine2000.pong.shapes.Player;
+import net.l2mine2000.pong.shapes.Wall;
+import net.l2mine2000.pong.shapes.buttons.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Pong extends JPanel implements Runnable {
     public static void main(String[] args) {
@@ -29,9 +33,9 @@ public class Pong extends JPanel implements Runnable {
     private static Pong instance;
     public final ArrayList<Wall> walls = new ArrayList<>();
     public final ArrayList<MenuButton> buttons = new ArrayList<>();
-    private final KeyHandler keyHandler;
     private final MouseHandler mouseHandler;
     private final MouseMotionHandler mouseMotionHandler;
+    private final KeyHandler keyHandler;
     private Thread gameThread;
     public Ball ball;
     public final ArrayList<Player> players = new ArrayList<>();
@@ -48,7 +52,7 @@ public class Pong extends JPanel implements Runnable {
             this.robot = null;
         }
         instance = this;
-        this.window = new JFrame("pong.Pong");
+        this.window = new JFrame("net.l2mine2000.pong.Pong");
         this.window.setLocationRelativeTo(null);
         this.window.setVisible(true);
         this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,6 +65,7 @@ public class Pong extends JPanel implements Runnable {
         this.setLocation(this.window.getLocation().x - screenDim.width / 2, this.window.getLocation().y - screenDim.height / 2);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
+        this.requestFocusInWindow();
         this.window.add(this);
         this.window.pack();
         this.setBackground(Color.BLACK);
@@ -68,10 +73,12 @@ public class Pong extends JPanel implements Runnable {
         this.mouseHandler = new MouseHandler();
         this.mouseMotionHandler = new MouseMotionHandler();
         DEFAULT_CURSOR = this.getCursor();
-        this.addKeyListener(this.keyHandler);
+        this.setCursor(DEFAULT_CURSOR);
         this.addMouseListener(this.mouseHandler);
         this.addMouseMotionListener(this.mouseMotionHandler);
-        this.setCursor(DEFAULT_CURSOR);
+        this.addKeyListener(this.keyHandler);
+        System.out.println(this.keyHandler);
+        System.out.println(Arrays.toString(this.getKeyListeners()));
         this.init();
         this.start();
     }
@@ -223,6 +230,10 @@ public class Pong extends JPanel implements Runnable {
         WALL_THICKNESS = (int) pixel(5);
         if (!this.isMenuOpen()) {
             this.moveMouse(this.getWidth()/2f, this.getHeight()/2f);
+        }
+        if (!this.hasFocus()) {
+            this.requestFocusInWindow();
+            //this.requestFocus();
         }
     }
 

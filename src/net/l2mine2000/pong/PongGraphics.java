@@ -1,7 +1,7 @@
-package pong;
+package net.l2mine2000.pong;
 
-import pong.shapes.DynamicShape;
-import pong.shapes.buttons.MenuButton;
+import net.l2mine2000.pong.shapes.DynamicShape;
+import net.l2mine2000.pong.shapes.buttons.MenuButton;
 
 import java.awt.*;
 import java.util.ArrayList;

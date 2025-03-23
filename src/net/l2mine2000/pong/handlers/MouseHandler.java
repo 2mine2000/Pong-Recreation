@@ -1,7 +1,7 @@
-package pong.handlers;
+package net.l2mine2000.pong.handlers;
 
-import pong.Pong;
-import pong.shapes.buttons.MenuButton;
+import net.l2mine2000.pong.Pong;
+import net.l2mine2000.pong.shapes.buttons.MenuButton;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -42,7 +42,7 @@ public class MouseHandler implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        Pong pong = Pong.getInstance();
     }
 
     @Override
