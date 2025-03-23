@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Ball extends DynamicShape {
-    public static final double ANGLE_MODIFIER = 25;
+    public static final double ANGLE_MODIFIER = 12.5;
     private static final int GRADIENT_LIMITER = 7;
     public static final float BASE_SPEED = Pong.pixel(10);
     public static final float MAX_SPEED = Pong.pixel(50);
@@ -171,10 +171,10 @@ public class Ball extends DynamicShape {
                     if (shape instanceof Player player && player.isMoving()) {
                         switch (player.getMoving()) {
                             case "Down": {
-                                if (this.getAngle() > -45 && this.getAngle() < 45) {
-                                    this.setBoost(this.getSpeed() / 3, Pong.TPS);
-                                }else if (this.getAngle() < -135 || this.getAngle() > 135) {
+                                if (this.getAngle() > -67.5 && this.getAngle() < 67.5) {
                                     this.setBoost(-this.getSpeed() / 3, Pong.TPS*2);
+                                }else if (this.getAngle() < -157.5 || this.getAngle() > 157.5) {
+                                    this.setBoost(this.getSpeed() / 3, Pong.TPS);
                                 }
                                 if (this.getAngle() > 0 && this.getAngle() < 180) {
                                     this.setAngle(this.getAngle() + Math.random() * ANGLE_MODIFIER);
@@ -196,6 +196,11 @@ public class Ball extends DynamicShape {
                                 break;
                             }
                             case "Up": {
+                                if (this.getAngle() > -67.5 && this.getAngle() < 67.5) {
+                                    this.setBoost(this.getSpeed() / 3, Pong.TPS);
+                                }else if (this.getAngle() < -157.5 || this.getAngle() > 157.5) {
+                                    this.setBoost(-this.getSpeed() / 3, Pong.TPS*2);
+                                }
                                 if (this.getAngle() > 0 && this.getAngle() < 180) {
                                     this.setAngle(this.getAngle() - Math.random() * ANGLE_MODIFIER);
                                     if (this.getAngle() <= 0) {
@@ -205,11 +210,6 @@ public class Ball extends DynamicShape {
                                         this.setAngle(179);
                                     }
                                 }else if (this.getAngle() < 0) {
-                                    if (this.getAngle() > -67.5 && this.getAngle() < 67.5) {
-                                        this.setBoost(-this.getSpeed() / 3, Pong.TPS*2);
-                                    }else if (this.getAngle() < -157.5 || this.getAngle() > 157.5) {
-                                        this.setBoost(this.getSpeed() / 3, Pong.TPS);
-                                    }
                                     this.setAngle(this.getAngle() + Math.random() * ANGLE_MODIFIER);
                                     if (this.getAngle() >= 0) {
                                         this.setAngle(-1);
