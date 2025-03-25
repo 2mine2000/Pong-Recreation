@@ -124,21 +124,19 @@ public class Pong extends JPanel implements Runnable {
     private void paintTick(PongGraphics pGraphics) {
         if (this.gameState == PLAYING || this.gameState == PAUSED) {
             this.drawScores(pGraphics);
-
             int pointille = 31;
             pGraphics.setColor(Color.GRAY);
             for (int i = 0; i < pointille; i++) {
-                if (i % 2 == 0) {
-                    pGraphics.g.fillRect(this.getWidth()/2, i * getHeight() / pointille, 1, this.getHeight() / pointille);
-                }
-            }
-            if (this.ball != null) {
-                this.ball.draw(pGraphics);
+                if (i % 2 == 0) {pGraphics.g.fillRect(this.getWidth()/2, i * getHeight() / pointille, 1, this.getHeight() / pointille);}
             }
 
             pGraphics.drawAll(this.players);
+            if (this.ball != null) {
+                this.ball.draw(pGraphics);
+            }
             pGraphics.drawAll(this.walls);
         }
+
         if (this.gameState == PAUSED) {
             pGraphics.setColor(new Color(0, 0, 0, 175));
             pGraphics.g.fillRect(0, 0, this.getWidth(), this.getHeight());
