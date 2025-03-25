@@ -77,8 +77,6 @@ public class Pong extends JPanel implements Runnable {
         this.addMouseListener(this.mouseHandler);
         this.addMouseMotionListener(this.mouseMotionHandler);
         this.addKeyListener(this.keyHandler);
-        System.out.println(this.keyHandler);
-        System.out.println(Arrays.toString(this.getKeyListeners()));
         this.init();
         this.start();
     }
@@ -232,7 +230,6 @@ public class Pong extends JPanel implements Runnable {
         }
         if (!this.hasFocus()) {
             this.requestFocusInWindow();
-            //this.requestFocus();
         }
     }
 
