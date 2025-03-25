@@ -96,8 +96,7 @@ public class Pong extends JPanel implements Runnable {
         QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(125), (int) pixel(200), (int) pixel(75), Color.RED, new Color(255, 200, 200), LightSide.TOP_LEFT, "Quit", null);
         ResumeButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(37.5f), (int) pixel(300), (int) pixel(75), Color.GREEN, new Color(200, 255, 200), LightSide.TOP_LEFT, "Resume", null);
         MainMenuButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(125), (int) pixel(300), (int) pixel(75), Color.RED, new Color(255, 200, 200), LightSide.TOP_LEFT, "Main menu", null);
-        Player.create((float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_Z || key == KeyEvent.VK_W || key == KeyEvent.VK_Q || key == KeyEvent.VK_A, (key)-> key == KeyEvent.VK_S || key == KeyEvent.VK_D);
-        Player.create(this.getWidth()-20- (float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_UP || key == KeyEvent.VK_RIGHT, (key)-> key == KeyEvent.VK_DOWN || key == KeyEvent.VK_LEFT);
+        this.recreatePlayers();
         this.mainMenu();
     }
 
@@ -235,6 +234,12 @@ public class Pong extends JPanel implements Runnable {
             this.requestFocusInWindow();
             //this.requestFocus();
         }
+    }
+
+    public void recreatePlayers() {
+        this.players.clear();
+        Player.create((float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_Z || key == KeyEvent.VK_W || key == KeyEvent.VK_Q || key == KeyEvent.VK_A, (key)-> key == KeyEvent.VK_S || key == KeyEvent.VK_D);
+        Player.create(this.getWidth()-20- (float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_UP || key == KeyEvent.VK_RIGHT, (key)-> key == KeyEvent.VK_DOWN || key == KeyEvent.VK_LEFT);
     }
 
     public void moveMouse(float pX, float pY) {

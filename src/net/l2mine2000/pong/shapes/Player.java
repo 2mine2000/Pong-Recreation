@@ -38,9 +38,9 @@ public class Player extends Wall {
         if (this.playable) {
             if (this.up != this.down) {
                 if (this.up) {
-                    this.tryGoingUp();
-                }else this.tryGoingDown();
-            }
+                    if (!this.tryGoingUp()) {this.moving = "";}
+                }else if (!this.tryGoingDown()) {this.moving = "";}
+            }else this.moving = "";
         }
     }
 
@@ -56,7 +56,7 @@ public class Player extends Wall {
         super.draw(pGraphics);
     }
 
-    public void tryGoingUp() {
+    public boolean tryGoingUp() {
         if (this.getY() - SPEED > Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight() + Pong.getInstance().getHeight() / 771f*2) {
             this.moving = "Up";
             this.move(0, -SPEED);
@@ -71,11 +71,11 @@ public class Player extends Wall {
                     Pong.getInstance().ball.setAngle(Ball.simplifyAngle((Math.random() * 45) + (Math.random() - 0.49999) * Ball.ANGLE_MODIFIER));
                 }
                 Pong.getInstance().ball.setBoost(Pong.getInstance().ball.getSpeed()/2, Pong.TPS);
-            }
-        }
+            }return true;
+        }return false;
     }
 
-    public void tryGoingDown() {
+    public boolean tryGoingDown() {
         if (this.getEndY() + SPEED < Pong.getInstance().getHeight() - Pong.WALL_THICKNESS - Pong.getInstance().ball.getHeight() - Pong.getInstance().getHeight() / 771f*2) {
             this.moving = "Down";
             this.move(0, SPEED);
@@ -90,8 +90,8 @@ public class Player extends Wall {
                     Pong.getInstance().ball.setAngle(Ball.simplifyAngle((180 - Math.random() * 45) + (Math.random() - 0.49999) * Ball.ANGLE_MODIFIER));
                 }
                 Pong.getInstance().ball.setBoost(Pong.getInstance().ball.getSpeed()/2, Pong.TPS);
-            }
-        }
+            }return true;
+        }return false;
     }
 
     public void setMoving(String pMoving){

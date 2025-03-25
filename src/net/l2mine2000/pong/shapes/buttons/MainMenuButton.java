@@ -17,6 +17,7 @@ public class MainMenuButton extends MenuButton {
     @Override
     void run(Pong pPong) {
         pPong.mainMenu();
+        pPong.recreatePlayers();
     }
 
     public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.LightSide pLightSide, String pText, Font pFont) {
