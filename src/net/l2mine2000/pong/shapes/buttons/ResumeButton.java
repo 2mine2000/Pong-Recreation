@@ -5,7 +5,7 @@ import net.l2mine2000.pong.Pong;
 import java.awt.*;
 
 public class ResumeButton extends MenuButton {
-    private ResumeButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.LightSide pLightSide, String pText, Font pFont) {
+    private ResumeButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
         super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont);
     }
 
@@ -19,11 +19,11 @@ public class ResumeButton extends MenuButton {
         pPong.resume();
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.LightSide pLightSide, String pText, Font pFont) {
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
         register(new ResumeButton(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pText, pFont));
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.LightSide pLightSide, String pText, Font pFont) {
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
         register(new ResumeButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont));
     }
 

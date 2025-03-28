@@ -11,14 +11,14 @@ public abstract class MenuButton extends DynamicShape {
     protected final Color textColor;
     protected final Color lightColor;
     protected final Color shadowColor;
-    protected final Pong.LightSide lightSide;
+    protected final Pong.DiagonalDirection lightSide;
     protected final float thickness = Pong.pixel(5);
     protected boolean active = false;
     protected final String text;
     protected final Font font;
     protected boolean selected = false;
 
-    protected MenuButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.LightSide pLightSide, String pText, Font pFont) {
+    protected MenuButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
         super(pX, pY, pWidth, pHeight, pColor);
         this.textColor = pTextColor;
         this.lightColor = new Color(Math.max(0, Math.min(pColor.getRed()/3*4, 255)), Math.max(0, Math.min(pColor.getGreen()/3*4, 255)), Math.max(0, Math.min(pColor.getBlue()/3*4, 255)));
@@ -68,7 +68,7 @@ public abstract class MenuButton extends DynamicShape {
         return this.shadowColor;
     }
 
-    public Pong.LightSide getLightSide() {
+    public Pong.DiagonalDirection getLightSide() {
         return this.lightSide;
     }
 

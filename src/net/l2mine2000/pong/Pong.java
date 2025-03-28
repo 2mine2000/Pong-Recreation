@@ -90,10 +90,10 @@ public class Pong extends JPanel implements Runnable {
         Wall.create(0, (float) (this.getHeight() * 4) /5 , WALL_THICKNESS, this.getHeight()/5);
         Wall.create(this.getWidth() - WALL_THICKNESS, 0, WALL_THICKNESS, this.getHeight()/5);
         Wall.create(this.getWidth() - WALL_THICKNESS, (float) (this.getHeight() * 4) /5 , WALL_THICKNESS, this.getHeight()/5);
-        PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(5), (int) pixel(400), (int) pixel(90), Color.GREEN, new Color(200, 255, 200), LightSide.TOP_LEFT, "Play", new Font("Dialog.plain", Font.BOLD, (int) pixel(40)));
-        QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(125), (int) pixel(200), (int) pixel(75), Color.RED, new Color(255, 200, 200), LightSide.TOP_LEFT, "Quit", null);
-        ResumeButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(37.5f), (int) pixel(300), (int) pixel(75), Color.GREEN, new Color(200, 255, 200), LightSide.TOP_LEFT, "Resume", null);
-        MainMenuButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(125), (int) pixel(300), (int) pixel(75), Color.RED, new Color(255, 200, 200), LightSide.TOP_LEFT, "Main menu", null);
+        PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(5), (int) pixel(400), (int) pixel(90), Color.GREEN, new Color(200, 255, 200), DiagonalDirection.TOP_LEFT, "Play", new Font("Dialog.plain", Font.BOLD, (int) pixel(40)));
+        QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(125), (int) pixel(200), (int) pixel(75), Color.RED, new Color(255, 200, 200), DiagonalDirection.TOP_LEFT, "Quit", null);
+        ResumeButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(37.5f), (int) pixel(300), (int) pixel(75), Color.GREEN, new Color(200, 255, 200), DiagonalDirection.TOP_LEFT, "Resume", null);
+        MainMenuButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(125), (int) pixel(300), (int) pixel(75), Color.RED, new Color(255, 200, 200), DiagonalDirection.TOP_LEFT, "Main menu", null);
         this.recreatePlayers();
         this.mainMenu();
     }
@@ -233,8 +233,10 @@ public class Pong extends JPanel implements Runnable {
 
     public void recreatePlayers() {
         this.players.clear();
-        Player.create((float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_Z || key == KeyEvent.VK_W || key == KeyEvent.VK_Q || key == KeyEvent.VK_A, (key)-> key == KeyEvent.VK_S || key == KeyEvent.VK_D);
-        Player.create(this.getWidth()-20- (float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, (key)-> key == KeyEvent.VK_UP || key == KeyEvent.VK_RIGHT, (key)-> key == KeyEvent.VK_DOWN || key == KeyEvent.VK_LEFT);
+        //Player.create((float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, Direction.AxisX.RIGHT, (key)-> key == KeyEvent.VK_Z || key == KeyEvent.VK_W || key == KeyEvent.VK_Q || key == KeyEvent.VK_A, (key)-> key == KeyEvent.VK_S || key == KeyEvent.VK_D);
+        Player.create((float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, Direction.AxisX.RIGHT, Player.AIDifficulty.DEFAULT);
+        Player.create(this.getWidth()-20- (float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, Direction.AxisX.LEFT, (key)-> key == KeyEvent.VK_UP || key == KeyEvent.VK_RIGHT, (key)-> key == KeyEvent.VK_DOWN || key == KeyEvent.VK_LEFT);
+        //Player.create(this.getWidth()-20- (float) Pong.getInstance().getWidth() /8, 30, Color.WHITE, Direction.AxisX.LEFT);
     }
 
     public void moveMouse(float pX, float pY) {
@@ -314,14 +316,13 @@ public class Pong extends JPanel implements Runnable {
         return PIXEL * pCount;
     }
 
-
-    public enum LightSide {
+    public enum DiagonalDirection {
         TOP_LEFT,
         TOP_RIGHT,
         BOTTOM_LEFT,
         BOTTOM_RIGHT;
 
-        public LightSide getOpposite() {
+        public DiagonalDirection getOpposite() {
             return switch (this) {
                 case TOP_LEFT -> BOTTOM_RIGHT;
                 case TOP_RIGHT -> BOTTOM_LEFT;
@@ -330,7 +331,7 @@ public class Pong extends JPanel implements Runnable {
             };
         }
 
-        public LightSide getClockwise() {
+        public DiagonalDirection getClockwise() {
             return switch (this) {
                 case TOP_LEFT -> TOP_RIGHT;
                 case TOP_RIGHT -> BOTTOM_RIGHT;
@@ -339,7 +340,7 @@ public class Pong extends JPanel implements Runnable {
             };
         }
 
-        public LightSide getCounterClockwise() {
+        public DiagonalDirection getCounterClockwise() {
             return switch (this) {
                 case TOP_LEFT -> BOTTOM_LEFT;
                 case TOP_RIGHT -> TOP_LEFT;

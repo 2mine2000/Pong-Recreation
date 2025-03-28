@@ -60,11 +60,11 @@ public class PongGraphics {
         }else this.drawShadowedRectangle(pButton.getCollisionBox(), pButton.getLightColor(), pButton.getShadowColor(), pButton.getLightSide());
     }
 
-    public void drawShadowedRectangle(Rectangle pRectangle, Color pLight, Pong.LightSide pLightSide) {
+    public void drawShadowedRectangle(Rectangle pRectangle, Color pLight, Pong.DiagonalDirection pLightSide) {
         this.drawShadowedRectangle(pRectangle, pLight, new Color(pLight.getRed()/3*2, pLight.getGreen()/3*2, pLight.getBlue()/3*2), pLightSide);
     }
 
-    public void drawShadowedRectangle(Rectangle pRectangle, Color pLight, Color pShadow, Pong.LightSide pLightSide) {
+    public void drawShadowedRectangle(Rectangle pRectangle, Color pLight, Color pShadow, Pong.DiagonalDirection pLightSide) {
         switch (pLightSide) {
             case TOP_LEFT -> {
                 this.g.setColor(pShadow);

@@ -117,10 +117,14 @@ public class Ball extends DynamicShape {
 
     public void updatePosition() {
         if (this.cooldown <= 0) {
-            double cos = Math.cos(Math.toRadians(this.angle) + Math.PI/2);
-            double sin = Math.sin(Math.toRadians(this.angle) + Math.PI/2);
-            this.move(((float) ((this.speed+this.speedBoost) * -cos)), ((float) ((this.speed+this.speedBoost) * -sin)));
+            double cos = Math.cos(Math.toRadians(this.angle) - Math.PI/2);
+            double sin = Math.sin(Math.toRadians(this.angle) - Math.PI/2);
+            this.move(((float) ((this.speed+this.speedBoost) * cos)), ((float) ((this.speed+this.speedBoost) * sin)));
         }
+    }
+
+    public float getBoost() {
+        return this.speedBoost;
     }
 
     public void setBoost(float pSpeedBoost, int pBoostTime) {
@@ -134,6 +138,10 @@ public class Ball extends DynamicShape {
 
     public void setSpeed(float pSpeed) {
         this.speed = pSpeed;
+    }
+
+    public float getTotalSpeed() {
+        return this.speed + this.speedBoost;
     }
 
     public float getCooldown() {
