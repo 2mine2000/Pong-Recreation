@@ -21,7 +21,9 @@ public class PongGraphics {
 
     public <T extends DynamicShape> void drawAll(ArrayList<T> pShapes) {
         for (T shape : pShapes) {
-            shape.draw(this);
+            if (shape.isVisible()) {
+                shape.draw(this);
+            }
         }
     }
 

@@ -30,7 +30,7 @@ public class Player extends Wall {
     }
 
     private Player(boolean pPlayable, float pX, float pY, Color pColor, Direction.AxisX pFrontSide, AIDifficulty pAIDifficulty, Function<Integer ,Boolean> pIsUp, Function<Integer ,Boolean> pIsDown) {
-        super(pX, pY, (int) Pong.pixel(20), (int) Pong.pixel(150), pColor);
+        super(pX, pY, (int) Pong.pixel(20), (int) Pong.pixel(150), pColor, Pong.State.PLAYING, Pong.State.PAUSED);
         this.playable = pPlayable;
         this.spawnY = pY;
         this.isUp = pIsUp;
@@ -40,7 +40,7 @@ public class Player extends Wall {
     }
 
     @Override
-    public void tick() {
+    public void tick(Pong pPong) {
         if (this.playable) {
             if (this.up != this.down) {
                 if (this.up) {
@@ -48,10 +48,9 @@ public class Player extends Wall {
                 }else if (!this.tryGoingDown(SPEED)) {this.moving = "";}
             }else this.moving = "";
         }else {
-            System.out.println(this.aiDifficulty.getYDetectionRange(this.getHeight()));
             Ball ball = Pong.getInstance().ball;
             float speedRatio = (ball.getTotalSpeed()) / (ball.getTotalSpeed() > Ball.MAX_SPEED ? Ball.MAX_SPEED + ball.getBoost() : Ball.MAX_SPEED);
-            float focusDistance = Pong.getInstance().getWidth()/2f * speedRatio - Pong.pixel(this.aiDifficulty.getFocusDistancePixelModifier() * (1-speedRatio));
+            float focusDistance = Pong.getInstance().getWidth()/2f * speedRatio - Pong.pixel(this.aiDifficulty.getFocusDistancePixelRemoval() * (1-speedRatio));
 
             if (this.frontSide.equals(Direction.AxisX.RIGHT)) {
                 if (ball.getCenterX() >= this.getCenterX()) {
@@ -105,13 +104,6 @@ public class Player extends Wall {
             else if (ball.getCenterY() < this.getCenterY()) {
                 if (!this.tryGoingDown((float) (this.aiDifficulty.getGenericSpeed() * sin))) {this.moving = "";}
             }
-            else {
-                if (new Random().nextBoolean()) {
-                    if (!this.tryGoingUp((float) (this.aiDifficulty.getGenericSpeed() * sin))) {this.moving = "";}
-                }else {
-                    if (!this.tryGoingDown((float) (this.aiDifficulty.getGenericSpeed() * sin))) {this.moving = "";}
-                }
-            }
         }
     }
 
@@ -127,8 +119,9 @@ public class Player extends Wall {
         super.draw(pGraphics);
     }
 
-    public boolean tryGoingUp(float pSpeed) {
-        if (this.getY() - pSpeed > Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight()*1.2f + Pong.getInstance().getHeight() / 771f*2) {
+    public boolean tryGoingUp(float pSpeed, boolean pOverrideLimit) {
+        float pLimit = Pong.WALL_THICKNESS + Pong.getInstance().ball.getHeight()*1.2f + Pong.pixel(2);
+        if (pOverrideLimit || this.getY() - pSpeed > pLimit) {
             this.moving = "Up";
             this.move(0, -pSpeed);
             Ball ball = Pong.getInstance().ball;
@@ -143,11 +136,18 @@ public class Player extends Wall {
                 }
                 Pong.getInstance().ball.setBoost(Pong.getInstance().ball.getSpeed()/2, Pong.TPS);
             }return true;
+        }else if (this.getY() > pLimit) {
+            return this.tryGoingUp(this.getY() - pLimit, true);
         }return false;
     }
 
-    public boolean tryGoingDown(float pSpeed) {
-        if (this.getEndY() + pSpeed < Pong.getInstance().getHeight() - Pong.WALL_THICKNESS - Pong.getInstance().ball.getHeight()*1.2f - Pong.getInstance().getHeight() / 771f*2) {
+    public boolean tryGoingUp(float pSpeed) {
+        return this.tryGoingUp(pSpeed, false);
+    }
+
+    public boolean tryGoingDown(float pSpeed, boolean pOverrideLimit) {
+        float pLimit = Pong.getInstance().getHeight() - Pong.WALL_THICKNESS - Pong.getInstance().ball.getHeight()*1.2f - Pong.pixel(2);
+        if (pOverrideLimit || this.getEndY() + pSpeed < pLimit) {
             this.moving = "Down";
             this.move(0, pSpeed);
             Ball ball = Pong.getInstance().ball;
@@ -162,7 +162,13 @@ public class Player extends Wall {
                 }
                 Pong.getInstance().ball.setBoost(Pong.getInstance().ball.getSpeed()/2, Pong.TPS);
             }return true;
+        }else if (this.getEndY() < pLimit) {
+            return this.tryGoingDown(pLimit - this.getEndY(), true);
         }return false;
+    }
+
+    public boolean tryGoingDown(float pSpeed) {
+        return this.tryGoingDown(pSpeed, false);
     }
 
     public void setMoving(String pMoving){
@@ -209,16 +215,20 @@ public class Player extends Wall {
 
     public enum AIDifficulty {
         EMPTY((_)->0f, (_)->0f, 0f, (_)->0f),
-        DEFAULT((height)->height/8f, Float::valueOf, 200f, (defaultSpeed)->defaultSpeed);
+        BABY((height)->height/2f, (height)->height/20f, 500f, (defaultSpeed)->defaultSpeed*0.6f),
+        EASY((height)->height/4f, (height)->height*2f, 450f, (defaultSpeed)->defaultSpeed*0.8f),
+        NORMAL((height)->height/8f, Float::valueOf, 300f, (defaultSpeed)->defaultSpeed),
+        HARD((height)->height/16f, (height)->height/2f, 150f, (defaultSpeed)->defaultSpeed*1.2f),
+        IMPOSSIBLE((height)->height/100f, (_)->Pong.getInstance().ball.getHeight()+Pong.pixel(5), 0f, (defaultSpeed)->defaultSpeed/2 + Pong.getInstance().ball.getTotalSpeed()*0.9f);
 
         private final Function<Integer, Float> yDetectionRange;
         private final Function<Integer, Float> yRunAwayDistance;
-        private final float focusDistancePixelModifier;
+        private final float focusDistancePixelRemoval;
         private final Function<Float, Float> genericSpeed;
-        AIDifficulty(Function<Integer, Float> pYDetectionRange, Function<Integer, Float> pYRunAwayDistance, float pFocusDistancePixelModifier, Function<Float, Float> pGenericSpeed) {
+        AIDifficulty(Function<Integer, Float> pYDetectionRange, Function<Integer, Float> pYRunAwayDistance, float pFocusDistancePixelRemoval, Function<Float, Float> pGenericSpeed) {
             this.yDetectionRange = pYDetectionRange;
             this.yRunAwayDistance = pYRunAwayDistance;
-            this.focusDistancePixelModifier = pFocusDistancePixelModifier;
+            this.focusDistancePixelRemoval = pFocusDistancePixelRemoval;
             this.genericSpeed = pGenericSpeed;
         }
 
@@ -230,8 +240,8 @@ public class Player extends Wall {
             return this.yRunAwayDistance.apply(pHeight);
         }
 
-        public float getFocusDistancePixelModifier() {
-            return this.focusDistancePixelModifier;
+        public float getFocusDistancePixelRemoval() {
+            return this.focusDistancePixelRemoval;
         }
 
         public float getGenericSpeed() {

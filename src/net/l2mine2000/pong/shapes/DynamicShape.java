@@ -2,39 +2,53 @@ package net.l2mine2000.pong.shapes;
 
 import net.l2mine2000.pong.Pong;
 import net.l2mine2000.pong.PongGraphics;
+import net.l2mine2000.pong.Tickable;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 
-public abstract class DynamicShape {
+public abstract class DynamicShape implements Tickable {
+    protected final HashSet<Pong.State> allowedStates = new HashSet<>();
     private float x;
     private float y;
     private int width;
     private int height;
     private Color color;
 
-    public DynamicShape(int pWidth, int pHeight) {
-        this(pWidth, pHeight, Color.WHITE);
+    public DynamicShape(int pWidth, int pHeight, Pong.State... pAllowedStates) {
+        this(pWidth, pHeight, Color.WHITE, pAllowedStates);
     }
 
-    public DynamicShape(int pWidth, int pHeight, Color pColor) {
-        this(((float) Pong.getInstance().getWidth()) /2 - ((float) pWidth)/2, ((float) Pong.getInstance().getHeight())/2 - ((float) pHeight)/2, pWidth, pHeight, pColor);
+    public DynamicShape(int pWidth, int pHeight, Color pColor, Pong.State... pAllowedStates) {
+        this(((float) Pong.getInstance().getWidth()) /2 - ((float) pWidth)/2, ((float) Pong.getInstance().getHeight())/2 - ((float) pHeight)/2, pWidth, pHeight, pColor, pAllowedStates);
     }
 
-    public DynamicShape(float pX, float pY, int pWidth, int pHeight) {
-        this(pX, pY, pWidth, pHeight, Color.WHITE);
+    public DynamicShape(float pX, float pY, int pWidth, int pHeight, Pong.State... pAllowedStates) {
+        this(pX, pY, pWidth, pHeight, Color.WHITE, pAllowedStates);
     }
 
-    public DynamicShape(float pX, float pY, int pWidth, int pHeight, Color pColor) {
+    public DynamicShape(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.State... pAllowedStates) {
         this.resize(pWidth, pHeight);
         this.relocate(pX, pY);
         this.color = pColor;
+        if (pAllowedStates.length == 0) {
+            this.allowedStates.addAll(List.of(Pong.State.values()));
+        }else this.allowedStates.addAll(Arrays.asList(pAllowedStates));
     }
-
-    public abstract void tick();
 
     public void draw(PongGraphics pGraphics) {
         pGraphics.setColor(this.color);
+    }
+
+    public boolean isVisible(Pong.State pState) {
+        return this.allowedStates.contains(pState);
+    }
+
+    public boolean isVisible() {
+        return this.allowedStates.contains(Pong.getInstance().state);
     }
 
     public void relocate(float pX, float pY) {

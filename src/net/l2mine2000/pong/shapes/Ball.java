@@ -32,14 +32,14 @@ public class Ball extends DynamicShape {
     }
 
     private Ball(int pSize, Color pColor, Color pLastColor, int pPower, boolean pChaotic) {
-        super(pSize, pSize, pColor);
+        super(pSize, pSize, pColor, Pong.State.PLAYING, Pong.State.PAUSED);
         this.lastColor = pLastColor;
         this.power = pPower;
         this.chaotic = pChaotic;
     }
 
     @Override
-    public void tick() {
+    public void tick(Pong pPong) {
         if (this.boostTime - 1 > 0) {
             this.boostTime--;
         } else {
@@ -169,70 +169,26 @@ public class Ball extends DynamicShape {
     public <T extends DynamicShape> boolean isColliding(ArrayList<T> pShapes) {
         float distance = this.speed + this.speedBoost;
         Ball fake = this.getDuplicate();
+
         for (int i = 0; i <= distance; i++) {
             double cos = Math.cos(Math.toRadians(fake.angle) + Math.PI/2);
             double sin = Math.sin(Math.toRadians(fake.angle) + Math.PI/2);
             fake.move((float) -cos, (float) -sin);
+
             for (DynamicShape shape : pShapes) {
                 if (fake.intersect(shape)) {
                     Rectangle intersection = shape.getCollisionBox().intersection(fake.getCollisionBox());
+
                     if (shape instanceof Player player && player.isMoving()) {
-                        switch (player.getMoving()) {
-                            case "Down": {
-                                if (this.getAngle() > -67.5 && this.getAngle() < 67.5) {
-                                    this.setBoost(-this.getSpeed() / 3, Pong.TPS*2);
-                                }else if (this.getAngle() < -157.5 || this.getAngle() > 157.5) {
-                                    this.setBoost(this.getSpeed() / 3, Pong.TPS);
-                                }
-                                if (this.getAngle() > 0 && this.getAngle() < 180) {
-                                    this.setAngle(this.getAngle() + Math.random() * ANGLE_MODIFIER);
-                                    if (this.getAngle() <= 0) {
-                                        this.setAngle(1);
-                                    }
-                                    if (this.getAngle() >= 180) {
-                                        this.setAngle(179);
-                                    }
-                                }else if (this.getAngle() < 0) {
-                                    this.setAngle(this.getAngle() - Math.random() * ANGLE_MODIFIER);
-                                    if (this.getAngle() >= 0) {
-                                        this.setAngle(-1);
-                                    }
-                                    if (this.getAngle() <= -180) {
-                                        this.setAngle(-179);
-                                    }
-                                }
-                                break;
-                            }
-                            case "Up": {
-                                if (this.getAngle() > -67.5 && this.getAngle() < 67.5) {
-                                    this.setBoost(this.getSpeed() / 3, Pong.TPS);
-                                }else if (this.getAngle() < -157.5 || this.getAngle() > 157.5) {
-                                    this.setBoost(-this.getSpeed() / 3, Pong.TPS*2);
-                                }
-                                if (this.getAngle() > 0 && this.getAngle() < 180) {
-                                    this.setAngle(this.getAngle() - Math.random() * ANGLE_MODIFIER);
-                                    if (this.getAngle() <= 0) {
-                                        this.setAngle(1);
-                                    }
-                                    if (this.getAngle() >= 180) {
-                                        this.setAngle(179);
-                                    }
-                                }else if (this.getAngle() < 0) {
-                                    this.setAngle(this.getAngle() + Math.random() * ANGLE_MODIFIER);
-                                    if (this.getAngle() >= 0) {
-                                        this.setAngle(-1);
-                                    }
-                                    if (this.getAngle() <= -180) {
-                                        this.setAngle(-179);
-                                    }
-                                }
-                                break;
-                            }
-                        }
+                        this.affectSpeed(player.getMoving());
+                        this.affectAngle(player.getMoving());
                     }
-                    if (intersection.width >= intersection.height) {
+                    if (intersection.width > intersection.height) {
                         this.modifyAngleOnHorizontal();
-                    }else this.modifyAngleOnVertical();
+                    }else if (intersection.width < intersection.height) {
+                        this.modifyAngleOnVertical();
+                    }else this.setAngle(this.getDirectOpposite() + (Math.random() - 0.49999) * ANGLE_MODIFIER);
+
                     this.move((float) (i * -cos), (float) (i * -sin));
                     this.setSpeed(this.getSpeed() + (MAX_SPEED-BASE_SPEED)/(SPEED_RISING_TIME*Pong.TPS) * 15);
                     return true;
@@ -240,6 +196,74 @@ public class Ball extends DynamicShape {
             }
         }
         return false;
+    }
+
+    private void affectSpeed(String pMoving) {
+        switch (pMoving) {
+            case "Up" -> {
+                if (this.getAngle() > -67.5 && this.getAngle() < 67.5) {
+                    this.setBoost(this.getSpeed() / 3, Pong.TPS);
+                }else if (this.getAngle() < -157.5 || this.getAngle() > 157.5) {
+                    this.setBoost(-this.getSpeed() / 3, Pong.TPS*2);
+                }
+            }case "Down" -> {
+                if (this.getAngle() > -67.5 && this.getAngle() < 67.5) {
+                    this.setBoost(-this.getSpeed() / 3, Pong.TPS*2);
+                }else if (this.getAngle() < -157.5 || this.getAngle() > 157.5) {
+                    this.setBoost(this.getSpeed() / 3, Pong.TPS);
+                }
+            }
+        }
+    }
+
+    private void affectAngle(String pMoving) {
+        //Currently not done, needs to be reworked.
+        switch (pMoving) {
+            case "Up" -> {}
+            case "Down" -> {}
+        }
+        switch (pMoving) {
+            case "Down": {
+                if (this.getAngle() > 0 && this.getAngle() < 180) {
+                    this.setAngle(this.getAngle() + Math.random() * ANGLE_MODIFIER);
+                    if (this.getAngle() <= 0) {
+                        this.setAngle(1);
+                    }
+                    if (this.getAngle() >= 180) {
+                        this.setAngle(179);
+                    }
+                }else if (this.getAngle() < 0) {
+                    this.setAngle(this.getAngle() - Math.random() * ANGLE_MODIFIER);
+                    if (this.getAngle() >= 0) {
+                        this.setAngle(-1);
+                    }
+                    if (this.getAngle() <= -180) {
+                        this.setAngle(-179);
+                    }
+                }
+                break;
+            }
+            case "Up": {
+                if (this.getAngle() > 0 && this.getAngle() < 180) {
+                    this.setAngle(this.getAngle() - Math.random() * ANGLE_MODIFIER);
+                    if (this.getAngle() <= 0) {
+                        this.setAngle(1);
+                    }
+                    if (this.getAngle() >= 180) {
+                        this.setAngle(179);
+                    }
+                }else if (this.getAngle() < 0) {
+                    this.setAngle(this.getAngle() + Math.random() * ANGLE_MODIFIER);
+                    if (this.getAngle() >= 0) {
+                        this.setAngle(-1);
+                    }
+                    if (this.getAngle() <= -180) {
+                        this.setAngle(-179);
+                    }
+                }
+                break;
+            }
+        }
     }
 
     private void modifyAngleOnVertical() {

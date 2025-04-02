@@ -1,13 +1,20 @@
 package net.l2mine2000.pong.handlers;
 
 import net.l2mine2000.pong.Pong;
+import net.l2mine2000.pong.Tickable;
 import net.l2mine2000.pong.shapes.Player;
 import net.l2mine2000.pong.shapes.buttons.MenuButton;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyHandler implements KeyListener {
+public class KeyHandler implements KeyListener, Tickable {
+    private boolean escapingMenu = false;
+    private boolean shift = false;
+    private boolean control = false;
+    private boolean alt = false;
+
     @Override
     public void keyTyped(KeyEvent e) {
 
@@ -16,12 +23,14 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         Pong pong = Pong.getInstance();
+        int keyCode = e.getKeyCode();
+        this.setGlobalVariables(keyCode, true);
 
         if (pong.isMenuOpen()) {
-            if (nextButton(e.getKeyCode())) {
+            if (nextButton(keyCode)) {
                 boolean firstSelect = true;
                 for (int i = 0; i < pong.buttons.size(); i++) {
-                    if (pong.buttons.get(i).isSelected() && i < pong.buttons.size()-1 && pong.buttons.get(i).isVisible(pong.gameState) && pong.buttons.get(i+1).isVisible(pong.gameState)) {
+                    if (pong.buttons.get(i).isSelected() && i < pong.buttons.size()-1 && pong.buttons.get(i).isVisible() && pong.buttons.get(i+1).isVisible()) {
                         pong.buttons.get(i).setSelected(false);
                         pong.buttons.get(i+1).setSelected(true);
                         firstSelect = false;
@@ -31,7 +40,7 @@ public class KeyHandler implements KeyListener {
                 }
                 if (firstSelect) {
                     for (MenuButton button : pong.buttons) {
-                        if (button.isVisible(pong.gameState)) {
+                        if (button.isVisible()) {
                             for (MenuButton button1 : pong.buttons) {
                                 button1.setSelected(false);
                             }
@@ -43,10 +52,10 @@ public class KeyHandler implements KeyListener {
                 }
             }
 
-            if (previousButton(e.getKeyCode())) {
+            if (previousButton(keyCode)) {
                 boolean lastSelect = true;
                 for (int i = pong.buttons.size()-1; i >= 0; i--) {
-                    if (pong.buttons.get(i).isSelected() && i > 0 && pong.buttons.get(i).isVisible(pong.gameState) && pong.buttons.get(i-1).isVisible(pong.gameState)) {
+                    if (pong.buttons.get(i).isSelected() && i > 0 && pong.buttons.get(i).isVisible() && pong.buttons.get(i-1).isVisible()) {
                         pong.buttons.get(i).setSelected(false);
                         pong.buttons.get(i-1).setSelected(true);
                         lastSelect = false;
@@ -56,7 +65,7 @@ public class KeyHandler implements KeyListener {
                 }
                 if (lastSelect) {
                     for (MenuButton button : pong.buttons.reversed()) {
-                        if (button.isVisible(pong.gameState)) {
+                        if (button.isVisible()) {
                             for (MenuButton button1 : pong.buttons) {
                                 button1.setSelected(false);
                             }
@@ -68,12 +77,28 @@ public class KeyHandler implements KeyListener {
                 }
             }
 
-            if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_SPACE) {
                 for (MenuButton button : pong.buttons) {
                     if (button.isSelected()) {
                         pong.updateCursor(Pong.HIDDEN_CURSOR);
-                        button.setActiveState(true);
+                        if (pong.fadeInCooldown <= 0) {
+                            button.setActiveState(true);
+                        }
                     }
+                }
+            }
+
+            if (keyCode == KeyEvent.VK_ESCAPE || keyCode == KeyEvent.VK_BACK_SPACE) {
+                boolean flag = pong.state.isOne(Pong.State.MULTIPLAYER_MENU, Pong.State.SINGLEPLAYER_MENU, Pong.State.SIMULATION_MENU);
+                for (MenuButton button : pong.buttons) {
+                    if (button.isSelected()) {
+                        button.setSelected(false);
+                        flag = false;
+                    }
+                }
+                if (flag && pong.fadeInCooldown <= 0) {
+                    this.escapingMenu = true;
+                    pong.setFadeInCooldown(Pong.TPS/3, true);
                 }
             }
         }else {
@@ -85,14 +110,14 @@ public class KeyHandler implements KeyListener {
         }
 
         for (Player player : pong.players) {
-            if (player.isUp(e.getKeyCode())) {
+            if (player.isUp(keyCode)) {
                 player.up = true;
             }
-            if (player.isDown(e.getKeyCode())) {
+            if (player.isDown(keyCode)) {
                 player.down = true;
             }
         }
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if (keyCode == KeyEvent.VK_ESCAPE) {
             if (!pong.resume()) {
                 pong.pause();
             }
@@ -101,7 +126,10 @@ public class KeyHandler implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_SPACE) {
+        int keyCode = e.getKeyCode();
+        this.setGlobalVariables(keyCode, false);
+
+        if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_SPACE) {
             for (MenuButton button : Pong.getInstance().buttons) {
                 if (button.isActive()) {
                     button.setActiveState(false);
@@ -110,13 +138,33 @@ public class KeyHandler implements KeyListener {
             }
         }
         for (Player player : Pong.getInstance().players) {
-            if (player.isUp(e.getKeyCode())) {
+            if (player.isUp(keyCode)) {
                 player.up = false;
             }
-            if (player.isDown(e.getKeyCode())) {
+            if (player.isDown(keyCode)) {
                 player.down = false;
             }
         }
+    }
+
+    public void setGlobalVariables(int pKeyCode, boolean pValue) {
+        switch (pKeyCode) {
+            case KeyEvent.VK_SHIFT -> this.shift = pValue;
+            case KeyEvent.VK_CONTROL -> this.control = pValue;
+            case KeyEvent.VK_ALT -> this.alt = pValue;
+        }
+    }
+
+    public boolean shiftDown() {
+        return this.shift;
+    }
+
+    public boolean controlDown() {
+        return this.control;
+    }
+
+    public boolean altDown() {
+        return this.alt;
     }
 
     public static boolean previousButton(int pKeyCode) {
@@ -125,5 +173,13 @@ public class KeyHandler implements KeyListener {
 
     public static boolean nextButton(int pKeyCode) {
         return pKeyCode == KeyEvent.VK_RIGHT || pKeyCode == KeyEvent.VK_DOWN || pKeyCode == KeyEvent.VK_S || pKeyCode == KeyEvent.VK_D;
+    }
+
+    @Override
+    public void tick(Pong pPong) {
+        if (pPong.fadeInCooldown <= 1 && this.escapingMenu) {
+            this.escapingMenu = false;
+            pPong.mainMenu();
+        }
     }
 }

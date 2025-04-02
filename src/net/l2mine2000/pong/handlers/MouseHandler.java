@@ -24,8 +24,10 @@ public class MouseHandler implements MouseListener {
             }
         }
         for (MenuButton button : pong.buttons) {
-            if (button.isVisible(pong.gameState)) {
-                button.setActiveState(button.isMouseOver());
+            if (button.isVisible()) {
+                if (pong.fadeInCooldown <= 0) {
+                    button.setActiveState(button.isMouseOver());
+                }
             }
         }
     }
@@ -33,7 +35,7 @@ public class MouseHandler implements MouseListener {
     @Override
     public void mouseReleased(MouseEvent e) {
         for (MenuButton button : Pong.getInstance().buttons) {
-            if (button.isActive() && button.isVisible(Pong.getInstance().gameState)) {
+            if (button.isActive() && button.isVisible(Pong.getInstance().state)) {
                 button.setActiveState(false);
                 button.run();
             }
@@ -42,7 +44,7 @@ public class MouseHandler implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        Pong pong = Pong.getInstance();
+
     }
 
     @Override

@@ -3,27 +3,26 @@ package net.l2mine2000.pong.shapes.buttons;
 import net.l2mine2000.pong.Pong;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class QuitButton extends MenuButton {
-    protected QuitButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
-        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont);
-    }
+    public static final HashMap<Integer, HashSet<Pong.State>> INDEXES = new HashMap<>();
 
-    @Override
-    public boolean isVisible(int pGameState) {
-        return pGameState == Pong.MAIN_MENU;
+    protected QuitButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
+        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pAllowedStates);
     }
 
     @Override
     void run(Pong pPong) {
-        pPong.quit();
+        pPong.quit(true);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
-        register(new QuitButton(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pText, pFont));
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
+        register(new QuitButton(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pText, pFont, pAllowedStates), INDEXES);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
-        register(new QuitButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont));
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
+        register(new QuitButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pAllowedStates), INDEXES);
     }
 }

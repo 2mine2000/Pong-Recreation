@@ -5,9 +5,10 @@ import net.l2mine2000.pong.PongGraphics;
 import net.l2mine2000.pong.shapes.DynamicShape;
 
 import java.awt.*;
-import java.util.Objects;
+import java.util.*;
 
 public abstract class MenuButton extends DynamicShape {
+    private int indexInList = -1;
     protected final Color textColor;
     protected final Color lightColor;
     protected final Color shadowColor;
@@ -18,8 +19,8 @@ public abstract class MenuButton extends DynamicShape {
     protected final Font font;
     protected boolean selected = false;
 
-    protected MenuButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont) {
-        super(pX, pY, pWidth, pHeight, pColor);
+    protected MenuButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
+        super(pX, pY, pWidth, pHeight, pColor, pAllowedStates);
         this.textColor = pTextColor;
         this.lightColor = new Color(Math.max(0, Math.min(pColor.getRed()/3*4, 255)), Math.max(0, Math.min(pColor.getGreen()/3*4, 255)), Math.max(0, Math.min(pColor.getBlue()/3*4, 255)));
         this.shadowColor = new Color(Math.max(0, Math.min(pColor.getRed()/3*2, 255)), Math.max(0, Math.min(pColor.getGreen()/3*2, 255)), Math.max(0, Math.min(pColor.getBlue()/3*2, 255)));
@@ -29,17 +30,15 @@ public abstract class MenuButton extends DynamicShape {
     }
 
     @Override
-    public void tick() {
+    public void tick(Pong pPong) {
         if (this.active && !this.shouldBeBright()) {
             this.active = false;
         }
     }
 
-    public abstract boolean isVisible(int pGameState);
-
     @Override
     public void draw(PongGraphics pGraphics) {
-        if (this.isVisible(Pong.getInstance().gameState)) {
+        if (this.isVisible(Pong.getInstance().state)) {
             pGraphics.setFont(Objects.requireNonNullElseGet(this.font, () -> new Font(pGraphics.getFont().getFontName(), Font.BOLD, (int) Pong.pixel(20))));
             FontMetrics metrics = pGraphics.g.getFontMetrics();
             pGraphics.setThickness(this.thickness);
@@ -53,7 +52,11 @@ public abstract class MenuButton extends DynamicShape {
     abstract void run(Pong pPong);
 
     public void run() {
-        this.run(Pong.getInstance());
+        if (Pong.getInstance().fadeInCooldown <= 0) {
+            this.run(Pong.getInstance());
+            this.selected = false;
+            this.active = false;
+        }
     }
 
     public Color getTextColor() {
@@ -105,7 +108,20 @@ public abstract class MenuButton extends DynamicShape {
         return this.selected || (this.isMouseOver() && Pong.getInstance().getCursor() != Pong.HIDDEN_CURSOR);
     }
 
-    public static <T extends MenuButton> void register(T pButton) {
+    public int getIndex() {
+        return this.indexInList;
+    }
+
+    protected void initIndex(int pIndex) {
+        if (this.indexInList < 0) {
+            this.indexInList = pIndex;
+        }
+    }
+
+    public static <T extends MenuButton> void register(T pButton, HashMap<Integer, HashSet<Pong.State>> pTypeIndexes) {
+        int index = Pong.getInstance().buttons.size();
+        pButton.initIndex(index);
+        pTypeIndexes.put(index, pButton.allowedStates);
         Pong.getInstance().buttons.add(pButton);
     }
 }
