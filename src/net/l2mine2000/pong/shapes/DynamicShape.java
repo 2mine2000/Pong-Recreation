@@ -3,6 +3,7 @@ package net.l2mine2000.pong.shapes;
 import net.l2mine2000.pong.Pong;
 import net.l2mine2000.pong.PongGraphics;
 import net.l2mine2000.pong.Tickable;
+import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -115,6 +116,15 @@ public abstract class DynamicShape implements Tickable {
 
     public Rectangle getCollisionBox() {
         return new Rectangle((int) this.getX(), (int) this.getY(), this.getWidth(), this.getHeight());
+    }
+
+    public static DynamicShape of(Rectangle pRectangle) {
+        return new DynamicShape((float) pRectangle.getX(), (float) pRectangle.getY(), pRectangle.width, pRectangle.height) {
+            @Override
+            public void tick(Pong pPong) {
+
+            }
+        };
     }
 
     public static <T extends DynamicShape> void tickAll(ArrayList<T> pShapes) {

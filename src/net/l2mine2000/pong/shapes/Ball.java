@@ -90,7 +90,7 @@ public class Ball extends DynamicShape {
         if (this.cooldown > this.maxCooldown/GRADIENT_LIMITER) {
             float ratio = (float) (this.cooldown - this.maxCooldown / GRADIENT_LIMITER) / (this.maxCooldown - (float) this.maxCooldown / GRADIENT_LIMITER);
             Color background = Pong.getInstance().getBackground();
-            Color gradientColor = pGraphics.getColorBetween(this.lastColor, background, 1 - Math.max(0, Math.min(1, ratio)));
+            Color gradientColor = PongGraphics.getColorBetween(this.lastColor, background, 1 - Math.max(0, Math.min(1, ratio)));
 
             switch (this.goal) {
                 case "left" -> pGraphics.drawGradient(0, (float) Pong.getInstance().getHeight() /5, Pong.getInstance().getWidth()/10, Pong.getInstance().getHeight()/5 * 3, gradientColor, background);

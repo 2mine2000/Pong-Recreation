@@ -14,8 +14,9 @@ public class PongGraphics {
 
     private PongGraphics(Graphics2D pGraphics) {
         this.defaultColor = pGraphics.getColor();
-        this.defaultFont = pGraphics.getFont();
+        this.defaultFont = new Font(Pong.FONT_NAME, Font.BOLD, pGraphics.getFont().getSize());
         this.defaultStroke = pGraphics.getStroke();
+        pGraphics.setFont(this.defaultFont);
         this.g = pGraphics;
     }
 
@@ -24,6 +25,12 @@ public class PongGraphics {
             if (shape.isVisible()) {
                 shape.draw(this);
             }
+        }
+    }
+
+    public void drawIfExist(DynamicShape pShape) {
+        if (pShape != null) {
+            pShape.draw(this);
         }
     }
 
@@ -45,17 +52,19 @@ public class PongGraphics {
         }
     }
 
-    public Color getColorBetween(Color pFirst, Color pSecond, float pPosition) {
+    public static Color getColorBetween(Color pFirst, Color pSecond, float pPosition) {
         int red = (int) (pFirst.getRed() + pPosition * (pSecond.getRed() - pFirst.getRed()));
         int green = (int) (pFirst.getGreen() + pPosition * (pSecond.getGreen() - pFirst.getGreen()));
         int blue = (int) (pFirst.getBlue() + pPosition * (pSecond.getBlue() - pFirst.getBlue()));
         return new Color(red, green, blue);
     }
 
-    public void drawButton(MenuButton pButton) {
-        /*if (Pong.getInstance().gameState == Pong.MAIN_MENU && Pong.getInstance().fadeInCooldown > 0) {
-            this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.isActive()?20:25));
-        }else */this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.shouldBeBright()?(pButton.isActive()?45:60):(pButton.isActive()?20:25)));
+    public static Color getMeanColor(Color pFirst, Color pSecond) {
+        return getColorBetween(pFirst, pSecond, 0.5f);
+    }
+
+    public void drawSimpleButton(MenuButton pButton) {
+        this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.shouldBeBright()?(pButton.isActive()?45:60):(pButton.isActive()?20:25)));
         this.g.fill(pButton.getCollisionBox());
         if (pButton.isActive()) {
             this.drawShadowedRectangle(pButton.getCollisionBox(), pButton.getShadowColor(), pButton.getLightColor(), pButton.getLightSide());
@@ -117,6 +126,58 @@ public class PongGraphics {
                 this.g.drawLine(pRectangle.x, pRectangle.y + pRectangle.height, pRectangle.x + pRectangle.width, pRectangle.y + pRectangle.height);
             }
         }
+    }
+
+    public void drawCenteredString(String pString, int pFontSize) {
+        this.drawCenteredString(pString, pFontSize, 0, 0);
+    }
+
+    public void drawCenteredString(String pString, int pFontSize, Color pColor) {
+        this.drawCenteredString(pString, pFontSize, pColor, 0, 0);
+    }
+
+    public void drawCenteredString(String pString, int pFontSize, float pOffsetX, float pOffsetY) {
+        this.drawCenteredString(pString, pFontSize, this.getColor(), pOffsetX, pOffsetY);
+    }
+
+    public void drawCenteredString(String pString, int pFontSize, Color pColor, float pOffsetX, float pOffsetY) {
+        Pong pong = Pong.getInstance();
+        this.setColor(pColor);
+        this.setFont(new Font(this.defaultFont.getFontName(), Font.BOLD, pFontSize));
+        FontMetrics metrics = this.g.getFontMetrics();
+        this.g.drawString(pString, pong.getWidth()/2f - metrics.stringWidth(pString)/2f + pOffsetX, pong.getHeight()/2f - metrics.getHeight()/2f + pOffsetY);
+    }
+
+    protected void drawFading() {
+        Pong pong = Pong.getInstance();
+        if (pong.fadeInCooldown > 0) {
+            if (pong.fadeInCooldown < pong.maxFadeInCooldown) {
+                float ratio = ((float) pong.fadeInCooldown) / ((float) pong.maxFadeInCooldown);
+                this.setColor(new Color(0, 0, 0, pong.fadeReverse ? 1-ratio : ratio));
+            }else this.setColor(new Color(0f, 0f, 0f, pong.fadeReverse ? 0f : 1f));
+            this.g.fillRect(0, 0, pong.getWidth(), pong.getHeight());
+        }
+    }
+
+    protected void drawScores() {
+        Pong pong = Pong.getInstance();
+        this.setColor(Color.GRAY);
+        this.setFont(new Font(this.getFont().getFontName(), Font.BOLD, pong.getHeight()/5));
+        FontMetrics metrics = this.g.getFontMetrics();
+        this.g.drawString(String.valueOf(pong.players.getLast().getScore()), pong.getWidth()/2 - pong.getWidth()/16 - metrics.stringWidth(String.valueOf(pong.players.getLast().getScore())), (int) (metrics.getHeight()/1.2));
+        this.g.drawString(String.valueOf(pong.players.getFirst().getScore()), pong.getWidth()/2 + pong.getWidth()/16, (int) (metrics.getHeight()/1.2));
+    }
+
+    protected void drawTitle(float pBaseY, float pPixelCount) {
+        Pong pong = Pong.getInstance();
+        this.setFont(new Font(this.getFont().getFontName(), Font.BOLD, pong.getHeight()/5));
+        FontMetrics metrics = this.g.getFontMetrics();
+        this.setColor(Color.DARK_GRAY);
+        this.g.drawString("P O N G", pong.getWidth()/2f - metrics.stringWidth("P O N G")/2f, pong.getHeight()/pBaseY - Pong.pixel(pPixelCount));
+        this.setColor(Color.GRAY);
+        this.g.drawString("P O N G", pong.getWidth()/2f - metrics.stringWidth("P O N G")/2f, pong.getHeight()/pBaseY - Pong.pixel(pPixelCount+10));
+        this.setColor(Color.WHITE);
+        this.g.drawString("P O N G", pong.getWidth()/2f - metrics.stringWidth("P O N G")/2f, pong.getHeight()/pBaseY - Pong.pixel(pPixelCount+20));
     }
 
     public void dispose() {

@@ -56,6 +56,10 @@ public class StateSelectionButton extends MenuButton {
         create(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pState, pState.getName(), pFont, pStates);
     }
 
+    public static void create(float pX, float pY, int pWidth, int pHeight, Pong.DiagonalDirection pLightSide, Pong.State pState, Font pFont, Pong.State... pStates) {
+        create(pX, pY, pWidth, pHeight, pState.getMainColor(), pState.getTextColor(), pLightSide, pState, pState.getName(), pFont, pStates);
+    }
+
     public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Pong.State... pStates) {
         register(new StateSelectionButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pState, pText, pFont, pStates), INDEXES);
     }

@@ -26,7 +26,8 @@ public class Pong extends JPanel implements Runnable {
     public static String FONT_NAME = "Dialog.plain";
     public static final Color SLIGHTLY_RED = new Color(255, 200, 200);
     public static final Color SLIGHTLY_GREEN = new Color(200, 255, 200);
-    public static final Color SLIGHTLY_BLUE = new Color(200, 200, 255);
+    public static final Color SLIGHTLY_BLUE = new Color(220, 220, 255);
+    public static final Color SLIGHTLY_YELLOW = new Color(255, 255, 200);
     public static final Cursor HIDDEN_CURSOR = Toolkit.getDefaultToolkit().createCustomCursor(new BufferedImage(1, 1, BufferedImage.TRANSLUCENT), new Point(0, 0), "hidden_cursor");
     public static Cursor DEFAULT_CURSOR;
     public static final int TPS = 60;
@@ -99,23 +100,27 @@ public class Pong extends JPanel implements Runnable {
     }
 
     private void registerButtons() {
-        //Play button
+        //Play button 0
         PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/4f*3f, (int) pixel(400), (int) pixel(90), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, "Play", new Font(FONT_NAME, Font.BOLD, (int) pixel(40)), State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
-        //<- Back button
+        //<- Back button 1
         StateSelectionButton.create(pixel(20), pixel(20), (int) pixel(100), (int) pixel(50), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, State.MAIN_MENU, "< Back", null, State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
-        //Resume button
+        //Resume button 2
         StateSelectionButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(37.5f), (int) pixel(300), (int) pixel(75), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.PLAYING, "Resume", null, State.PAUSED);
-        //Main menu button
+        //Main menu button 3
         StateSelectionButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(125), (int) pixel(300), (int) pixel(75), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, State.MAIN_MENU, null, State.PAUSED);
+
         Font font = new Font(FONT_NAME, Font.BOLD, (int) pixel(35));
-        //Multiplayer mode button
-        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f - pixel(110), (int) pixel(400), (int) pixel(90), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.MULTIPLAYER_MENU, font, State.MAIN_MENU);
-        //Singleplayer mode button
-        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f, (int) pixel(400), (int) pixel(90), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.SINGLEPLAYER_MENU, font, State.MAIN_MENU);
-        //Simulation mode button
-        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(110), (int) pixel(400), (int) pixel(90), Color.BLUE, SLIGHTLY_BLUE, DiagonalDirection.TOP_LEFT, State.SIMULATION_MENU, font, State.MAIN_MENU);
-        //Quit button
+        //Multiplayer mode button 4
+        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f - pixel(110), (int) pixel(400), (int) pixel(90), new Color(25, 255, 25), SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.MULTIPLAYER_MENU, font, State.MAIN_MENU);
+        //Singleplayer mode button 5
+        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f, (int) pixel(400), (int) pixel(90), Color.YELLOW, SLIGHTLY_YELLOW, DiagonalDirection.TOP_LEFT, State.SINGLEPLAYER_MENU, font, State.MAIN_MENU);
+        //Simulation mode button 6
+        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(110), (int) pixel(400), (int) pixel(90), new Color(75, 75, 255), SLIGHTLY_BLUE, DiagonalDirection.TOP_LEFT, State.SIMULATION_MENU, font, State.MAIN_MENU);
+        //Quit button 7
         QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(220), (int) pixel(200), (int) pixel(75), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, "Quit", new Font(FONT_NAME, Font.BOLD, (int) pixel(30)), State.MAIN_MENU);
+
+        //test with bros 8-9
+        //OtherSwitchButton.create(0, 0, (int) pixel(50), (int) pixel(25), Color.WHITE, Color.GRAY, DiagonalDirection.TOP_LEFT, true, 8, "On", null);
     }
 
     public void start() {
@@ -150,7 +155,7 @@ public class Pong extends JPanel implements Runnable {
 
     private void paintTick(PongGraphics pGraphics) {
         if (this.state.isOne(State.PLAYING, State.PAUSED)) {
-            this.drawScores(pGraphics);
+            pGraphics.drawScores();
             int pointille = 31;
             pGraphics.setColor(Color.GRAY);
             for (int i = 0; i < pointille; i++) {
@@ -159,69 +164,30 @@ public class Pong extends JPanel implements Runnable {
         }
 
         pGraphics.drawAll(this.players);
-        if (this.ball != null && this.ball.isVisible()) {
-            this.ball.draw(pGraphics);
-        }
+        pGraphics.drawIfExist(this.ball);
         pGraphics.drawAll(this.walls);
 
         if (this.state.is(State.PAUSED)) {
             pGraphics.setColor(new Color(0, 0, 0, 175));
             pGraphics.g.fillRect(0, 0, this.getWidth(), this.getHeight());
-            pGraphics.setColor(Color.WHITE);
-            pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/20));
-            FontMetrics metrics = pGraphics.g.getFontMetrics();
-            pGraphics.g.drawString("Paused", this.getWidth()/2f - metrics.stringWidth("Paused")/2f, this.getHeight()/2f - pixel(37.5f));
-
-            pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/5));
-            metrics = pGraphics.g.getFontMetrics();
-            pGraphics.setColor(Color.DARK_GRAY);
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3f+pixel(20));
-            pGraphics.setColor(Color.GRAY);
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3f+pixel(10));
-            pGraphics.setColor(Color.WHITE);
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3f);
+            pGraphics.drawTitle(3f, -20);
+            pGraphics.drawCenteredString("Paused", (int) (this.getHeight()/20f), Color.WHITE, 0, pixel(12.5f));
         }
 
         pGraphics.drawAll(this.buttons);
 
         if (this.state.isMenu() && !this.state.is(State.PAUSED)) {
-            pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/5));
-            FontMetrics metrics = pGraphics.g.getFontMetrics();
-            pGraphics.setColor(Color.DARK_GRAY);
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3.25f - pixel(20));
-            pGraphics.setColor(Color.GRAY);
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3.25f - pixel(30));
-            pGraphics.setColor(Color.WHITE);
-            pGraphics.g.drawString("P O N G", this.getWidth()/2f - metrics.stringWidth("P O N G")/2f, this.getHeight()/3.25f - pixel(40));
+            pGraphics.drawTitle(3.25f, 20);
 
             if (!this.state.is(State.MAIN_MENU)) {
-                pGraphics.setColor(Color.WHITE);
-                pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/20));
-                metrics = pGraphics.g.getFontMetrics();
-                pGraphics.g.drawString(this.state.getName(), this.getWidth()/2f - metrics.stringWidth(this.state.getName())/2f, this.getHeight()/2f - pixel(115));
+                pGraphics.drawCenteredString(this.state.getName(), (int) (this.getHeight()/20f), Color.WHITE, 0, -pixel(90));
             }
         }
 
-        this.drawFading(pGraphics);
+        pGraphics.drawFading();
     }
 
-    private void drawScores(PongGraphics pGraphics) {
-        pGraphics.setColor(Color.GRAY);
-        pGraphics.setFont(new Font(pGraphics.getFont().getFontName(), Font.BOLD, this.getHeight()/5));
-        FontMetrics metrics = pGraphics.g.getFontMetrics();
-        pGraphics.g.drawString(String.valueOf(this.players.getLast().getScore()), this.getWidth()/2 - this.getWidth()/16 - metrics.stringWidth(String.valueOf(this.players.getLast().getScore())), (int) (metrics.getHeight()/1.2));
-        pGraphics.g.drawString(String.valueOf(this.players.getFirst().getScore()), this.getWidth()/2 + this.getWidth()/16, (int) (metrics.getHeight()/1.2));
-    }
 
-    private void drawFading(PongGraphics pGraphics) {
-        if (this.fadeInCooldown > 0) {
-            if (this.fadeInCooldown < this.maxFadeInCooldown) {
-                float ratio = ((float) this.fadeInCooldown) / ((float) this.maxFadeInCooldown);
-                pGraphics.setColor(new Color(0, 0, 0, this.fadeReverse ? 1-ratio : ratio));
-            }else pGraphics.setColor(new Color(0f, 0f, 0f, this.fadeReverse ? 0f : 1f));
-            pGraphics.g.fillRect(0, 0, this.getWidth(), this.getHeight());
-        }
-    }
 
     public static Pong getInstance() {
         return instance;
@@ -482,6 +448,28 @@ public class Pong extends JPanel implements Runnable {
                     return true;
                 }
             }return false;
+        }
+
+        public Color getMainColor() {
+            return switch (this) {
+                case EMPTINESS -> new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 0);
+                case MAIN_MENU -> Color.RED;
+                case MULTIPLAYER_MENU, PLAYING -> new Color(25, 255, 25);
+                case SINGLEPLAYER_MENU -> Color.YELLOW;
+                case SIMULATION_MENU -> new Color(75, 75, 255);
+                default -> Color.WHITE;
+            };
+        }
+
+        public Color getTextColor() {
+            return switch (this) {
+                case EMPTINESS -> new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 0);
+                case MAIN_MENU -> new Color(255, 200, 200);
+                case MULTIPLAYER_MENU, PLAYING -> new Color(200, 255, 200);
+                case SINGLEPLAYER_MENU -> new Color(255, 255, 200);
+                case SIMULATION_MENU -> new Color(220, 220, 255);
+                default -> Color.WHITE;
+            };
         }
     }
 }
