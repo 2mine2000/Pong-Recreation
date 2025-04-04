@@ -6,21 +6,32 @@ import net.l2mine2000.pong.shapes.DynamicShape;
 
 import java.awt.*;
 import java.util.*;
+import java.util.function.Function;
 
 public abstract class MenuButton extends DynamicShape {
+    public static final Color MAIN_RED = Color.RED;
+    public static final Color TEXT_RED = new Color(255, 200, 200);
+    public static final Color MAIN_GREEN = new Color(25, 255, 25);
+    public static final Color TEXT_GREEN = new Color(200, 255, 200);
+    public static final Color MAIN_BLUE = new Color(75, 75, 255);
+    public static final Color TEXT_BLUE = new Color(220, 220, 255);
+    public static final Color MAIN_YELLOW = Color.YELLOW;
+    public static final Color TEXT_YELLOW = new Color(255, 255, 200);
+    public static final float DEFAULT_THICKNESS = Pong.pixel(5);
     private int indexInList = -1;
     protected final Color textColor;
     protected final Color lightColor;
     protected final Color shadowColor;
     protected final Pong.DiagonalDirection lightSide;
-    public static final float DEFAULT_THICKNESS = Pong.pixel(5);
     protected final float thickness = DEFAULT_THICKNESS;
     protected boolean active = false;
     protected final String text;
     protected final Font font;
     protected boolean selected = false;
+    private final Function<Boolean, Integer> nextInMenu;
+    private final Function<Boolean, Integer> previousInMenu;
 
-    protected MenuButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
+    protected MenuButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Function<Boolean, Integer> pNextButton, Function<Boolean, Integer> pPreviousButton, Pong.State... pAllowedStates) {
         super(pX, pY, pWidth, pHeight, pColor, pAllowedStates);
         this.textColor = pTextColor;
         this.lightColor = getLightEquivalent(pColor);
@@ -28,6 +39,8 @@ public abstract class MenuButton extends DynamicShape {
         this.lightSide = pLightSide;
         this.text = pText;
         this.font = pFont;
+        this.nextInMenu = pNextButton;
+        this.previousInMenu = pPreviousButton;
     }
 
     @Override
@@ -44,9 +57,9 @@ public abstract class MenuButton extends DynamicShape {
             FontMetrics metrics = pGraphics.g.getFontMetrics();
             pGraphics.setThickness(this.thickness);
             pGraphics.drawSimpleButton(this);
+            pGraphics.resetStroke();
             pGraphics.setColor(this.textColor);
             pGraphics.g.drawString(this.text, this.getCenterX() - metrics.stringWidth(this.text)/2f, this.getCenterY() + metrics.getHeight()/4f);
-            pGraphics.resetStroke();
         }
     }
 
@@ -54,9 +67,9 @@ public abstract class MenuButton extends DynamicShape {
 
     public void run() {
         if (Pong.getInstance().fadeInCooldown <= 0) {
-            this.run(Pong.getInstance());
             this.selected = false;
             this.active = false;
+            this.run(Pong.getInstance());
         }
     }
 
@@ -139,6 +152,20 @@ public abstract class MenuButton extends DynamicShape {
         if (this.indexInList < 0) {
             this.indexInList = pIndex;
         }
+    }
+
+    public void moveToNextButtonInMenu(boolean pVertical) {
+        MenuButton button = Pong.getInstance().buttons.get(this.nextInMenu.apply(pVertical));
+        this.selected = false;
+        button.selected = true;
+        Pong.getInstance().updateCursor(Pong.HIDDEN_CURSOR);
+    }
+
+    public void moveToPreviousButtonInMenu(boolean pVertical) {
+        MenuButton button = Pong.getInstance().buttons.get(this.previousInMenu.apply(pVertical));;
+        this.selected = false;
+        button.selected = true;
+        Pong.getInstance().updateCursor(Pong.HIDDEN_CURSOR);
     }
 
     public static Color getLightEquivalent(Color pColor) {

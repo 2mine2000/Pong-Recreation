@@ -5,14 +5,15 @@ import net.l2mine2000.pong.Pong;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Function;
 
 public class StateSelectionButton extends MenuButton {
     public static final HashMap<Integer, HashSet<Pong.State>> INDEXES = new HashMap<>();
     private final Pong.State state;
     private boolean pressed = false;
 
-    protected StateSelectionButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Pong.State... pAllowedStates) {
-        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pAllowedStates);
+    protected StateSelectionButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Function<Pong.State, Integer> pNextButton, Function<Pong.State, Integer> pPreviousButton, Pong.State... pAllowedStates) {
+        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pNextButton, pPreviousButton, pAllowedStates);
         this.state = pState;
     }
 

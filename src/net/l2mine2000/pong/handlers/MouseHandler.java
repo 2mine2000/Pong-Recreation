@@ -36,7 +36,6 @@ public class MouseHandler implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         for (MenuButton button : Pong.getInstance().buttons) {
             if (button.isActive() && button.isVisible(Pong.getInstance().state)) {
-                button.setActiveState(false);
                 button.run();
             }
         }

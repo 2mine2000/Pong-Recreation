@@ -6,6 +6,7 @@ import net.l2mine2000.pong.shapes.Player;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Function;
 
 import static net.l2mine2000.pong.Pong.State.SIMULATION_MENU;
 import static net.l2mine2000.pong.Pong.State.SINGLEPLAYER_MENU;
@@ -14,8 +15,8 @@ public class PlayButton extends MenuButton{
     public static final HashMap<Integer, HashSet<Pong.State>> INDEXES = new HashMap<>();
     private boolean pressed = false;
 
-    protected PlayButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
-        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pAllowedStates);
+    protected PlayButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Function<Pong.State, Integer> pNextButton, Function<Pong.State, Integer> pPreviousButton, Pong.State... pAllowedStates) {
+        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pNextButton, pPreviousButton, pAllowedStates);
     }
 
     @Override
@@ -24,7 +25,7 @@ public class PlayButton extends MenuButton{
         if (this.pressed && Pong.getInstance().fadeInCooldown <= 1) {
             this.pressed = false;
             switch (pPong.state) {
-                case SINGLEPLAYER_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.NORMAL, pPong.keyHandler.controlDown());
+                case SINGLEPLAYER_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.NORMAL, !((SwitchButton) pPong.buttons.get(8)).isSelectedSwitch());
                 case SIMULATION_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.NORMAL, Player.AIDifficulty.NORMAL);
                 default -> pPong.setOrCreatePlayers();
             }

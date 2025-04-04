@@ -119,8 +119,11 @@ public class Pong extends JPanel implements Runnable {
         //Quit button 7
         QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(220), (int) pixel(200), (int) pixel(75), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, "Quit", new Font(FONT_NAME, Font.BOLD, (int) pixel(30)), State.MAIN_MENU);
 
-        //test with bros 8-9
-        //OtherSwitchButton.create(0, 0, (int) pixel(50), (int) pixel(25), Color.WHITE, Color.GRAY, DiagonalDirection.TOP_LEFT, true, 8, "On", null);
+        //Reverse po with bros 8-9
+        font = PongGraphics.setFontSize(font, (int) pixel(35));
+        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_RED, MenuButton.TEXT_RED, DiagonalDirection.TOP_LEFT, true, "Left", font, State.SINGLEPLAYER_MENU);
+        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_BLUE, MenuButton.TEXT_BLUE, DiagonalDirection.TOP_LEFT, false, "Right", font, State.SINGLEPLAYER_MENU);
+        SwitchButton.link((SwitchButton) this.buttons.get(8), (SwitchButton) this.buttons.get(9), true, "Your side :", PongGraphics.getMeanColor(MenuButton.TEXT_RED, MenuButton.TEXT_BLUE), font, this.getWidth()/2f, this.getHeight()/2f);
     }
 
     public void start() {
@@ -453,10 +456,10 @@ public class Pong extends JPanel implements Runnable {
         public Color getMainColor() {
             return switch (this) {
                 case EMPTINESS -> new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 0);
-                case MAIN_MENU -> Color.RED;
-                case MULTIPLAYER_MENU, PLAYING -> new Color(25, 255, 25);
-                case SINGLEPLAYER_MENU -> Color.YELLOW;
-                case SIMULATION_MENU -> new Color(75, 75, 255);
+                case MAIN_MENU -> MenuButton.MAIN_RED;
+                case MULTIPLAYER_MENU, PLAYING -> MenuButton.MAIN_GREEN;
+                case SINGLEPLAYER_MENU -> MenuButton.MAIN_YELLOW;
+                case SIMULATION_MENU -> MenuButton.MAIN_BLUE;
                 default -> Color.WHITE;
             };
         }
@@ -464,10 +467,10 @@ public class Pong extends JPanel implements Runnable {
         public Color getTextColor() {
             return switch (this) {
                 case EMPTINESS -> new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 0);
-                case MAIN_MENU -> new Color(255, 200, 200);
-                case MULTIPLAYER_MENU, PLAYING -> new Color(200, 255, 200);
-                case SINGLEPLAYER_MENU -> new Color(255, 255, 200);
-                case SIMULATION_MENU -> new Color(220, 220, 255);
+                case MAIN_MENU -> MenuButton.TEXT_RED;
+                case MULTIPLAYER_MENU, PLAYING -> MenuButton.TEXT_GREEN;
+                case SINGLEPLAYER_MENU -> MenuButton.TEXT_YELLOW;
+                case SIMULATION_MENU -> MenuButton.TEXT_BLUE;
                 default -> Color.WHITE;
             };
         }

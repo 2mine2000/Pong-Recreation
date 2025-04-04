@@ -64,9 +64,13 @@ public class PongGraphics {
     }
 
     public void drawSimpleButton(MenuButton pButton) {
-        this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.shouldBeBright()?(pButton.isActive()?45:60):(pButton.isActive()?20:25)));
+        this.drawSimpleButton(pButton, pButton.isActive());
+    }
+
+    public void drawSimpleButton(MenuButton pButton, boolean pActiveRule) {
+        this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.shouldBeBright()?(pActiveRule?45:60):(pActiveRule?20:25)));
         this.g.fill(pButton.getCollisionBox());
-        if (pButton.isActive()) {
+        if (pActiveRule) {
             this.drawShadowedRectangle(pButton.getCollisionBox(), pButton.getShadowColor(), pButton.getLightColor(), pButton.getLightSide());
         }else this.drawShadowedRectangle(pButton.getCollisionBox(), pButton.getLightColor(), pButton.getShadowColor(), pButton.getLightSide());
     }
@@ -194,6 +198,10 @@ public class PongGraphics {
 
     public void setFontSize(int pSize) {
         this.setFont(new Font(this.getFont().getFontName(), this.getFont().getStyle(), pSize));
+    }
+
+    public static Font setFontSize(Font pFont, int pSize) {
+        return new Font(pFont.getFontName(), pFont.getStyle(), pSize);
     }
 
     public void setThickness(float pThickness) {

@@ -132,7 +132,6 @@ public class KeyHandler implements KeyListener, Tickable {
         if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_SPACE) {
             for (MenuButton button : Pong.getInstance().buttons) {
                 if (button.isActive()) {
-                    button.setActiveState(false);
                     button.run();
                 }
             }
