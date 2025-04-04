@@ -68,13 +68,14 @@ public class KeyHandler implements KeyListener, Tickable {
             }
 
             if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_SPACE) {
-                for (MenuButton button : pong.buttons) {
-                    if (button.isSelected()) {
-                        pong.updateCursor(Pong.HIDDEN_CURSOR);
-                        if (pong.fadeInCooldown <= 0) {
+                if (pong.fadeInCooldown <= 1) {
+                    for (MenuButton button : pong.buttons) {
+                        if (button.isSelected() && button.isVisible()) {
+                            pong.updateCursor(Pong.HIDDEN_CURSOR);
                             button.setActiveState(true);
                         }
                     }
+
                 }
             }
 

@@ -65,7 +65,7 @@ public class PongGraphics {
     }
 
     public void drawSimpleButton(MenuButton pButton) {
-        this.drawSimpleButton(pButton, pButton.isActive() && Pong.getInstance().getCursor() != Pong.HIDDEN_CURSOR);
+        this.drawSimpleButton(pButton, pButton.isActive());
     }
 
     public void drawSimpleButton(MenuButton pButton, boolean pActiveRule) {
@@ -164,8 +164,8 @@ public class PongGraphics {
         Pong pong = Pong.getInstance();
         if (pong.fadeInCooldown > 0) {
             if (pong.fadeInCooldown < pong.maxFadeInCooldown) {
-                float ratio = ((float) pong.fadeInCooldown) / ((float) pong.maxFadeInCooldown);
-                this.setColor(new Color(0, 0, 0, pong.fadeReverse ? 1-ratio : ratio));
+                pong.fadeRatio = ((float) pong.fadeInCooldown) / ((float) pong.maxFadeInCooldown);
+                this.setColor(new Color(0, 0, 0, pong.fadeReverse ? 1-pong.fadeRatio : pong.fadeRatio));
             }else this.setColor(new Color(0f, 0f, 0f, pong.fadeReverse ? 0f : 1f));
             this.g.fillRect(0, 0, pong.getWidth(), pong.getHeight());
         }
@@ -181,14 +181,19 @@ public class PongGraphics {
     }
 
     protected void drawTitle(float pBaseY, float pPixelCount) {
+        this.drawTitle(pBaseY, pPixelCount, Color.WHITE);
+    }
+
+
+    protected void drawTitle(float pBaseY, float pPixelCount, Color pColor) {
         Pong pong = Pong.getInstance();
         this.setFont(new Font(this.getFont().getFontName(), Font.BOLD, pong.getHeight()/5));
         FontMetrics metrics = this.g.getFontMetrics();
-        this.setColor(Color.DARK_GRAY);
+        this.setColor(new Color(pColor.getRed()/4, pColor.getGreen()/4, pColor.getBlue()/4));
         this.g.drawString("P O N G", pong.getWidth()/2f - metrics.stringWidth("P O N G")/2f, pong.getHeight()/pBaseY - Pong.pixel(pPixelCount));
-        this.setColor(Color.GRAY);
+        this.setColor(new Color(pColor.getRed()/2, pColor.getGreen()/2, pColor.getBlue()/2));
         this.g.drawString("P O N G", pong.getWidth()/2f - metrics.stringWidth("P O N G")/2f, pong.getHeight()/pBaseY - Pong.pixel(pPixelCount+10));
-        this.setColor(Color.WHITE);
+        this.setColor(pColor);
         this.g.drawString("P O N G", pong.getWidth()/2f - metrics.stringWidth("P O N G")/2f, pong.getHeight()/pBaseY - Pong.pixel(pPixelCount+20));
     }
 

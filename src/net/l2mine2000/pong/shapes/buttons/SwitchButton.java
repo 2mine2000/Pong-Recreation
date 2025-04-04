@@ -39,7 +39,7 @@ public class SwitchButton extends MenuButton {
                 pGraphics.g.fill(this.getCollisionBox());
             }
             pGraphics.setThickness(this.thickness);
-            pGraphics.drawSimpleButton(this, this.isSelectedSwitch);
+            pGraphics.drawSimpleButton(this, this.isSelectedSwitch || this.active);
             pGraphics.setColor(this.textColor);
             pGraphics.g.drawString(this.text, this.getCenterX() - metrics.stringWidth(this.text)/2f, this.getCenterY() + metrics.getHeight()/4f);
             pGraphics.resetStroke();
@@ -153,7 +153,7 @@ public class SwitchButton extends MenuButton {
                     Pong pong = Pong.getInstance();
                     float offset = titleFont == null ? Pong.pixel(20) : this.titleFont.getSize();
                     this.onButton.relocate(pong.getWidth()/2f + offset/2f,  this.y - this.onButton.getHeight()/2f);
-                    this.offButton.relocate(pong.getWidth()/2f + offset*1.5f + this.onButton.getWidth(), this.y - this.offButton.getHeight()/2f);
+                    this.offButton.relocate(pong.getWidth()/2f + offset + this.onButton.getWidth(), this.y - this.offButton.getHeight()/2f);
                 }
                 case OFFSET -> {
                     Pong pong = Pong.getInstance();

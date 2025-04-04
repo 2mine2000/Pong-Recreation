@@ -46,6 +46,7 @@ public class Pong extends JPanel implements Runnable {
     public State state = State.EMPTINESS;
     public int fadeInCooldown = 0;
     public int maxFadeInCooldown = 0;
+    public float fadeRatio = 0f;
     public boolean fadeReverse = false;
     private boolean leavingTheGame = false;
 
@@ -198,10 +199,12 @@ public class Pong extends JPanel implements Runnable {
         pGraphics.drawAll(this.buttons);
 
         if (this.state.isMenu() && !this.state.is(State.PAUSED)) {
-            pGraphics.drawTitle(3.25f, 20);
+            if (this.state.isOne(State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU)) {
+                pGraphics.drawTitle(3.25f, 20, this.state.getTextColor());
+            }else pGraphics.drawTitle(3.25f, 20);
 
             if (!this.state.is(State.MAIN_MENU)) {
-                pGraphics.drawCenteredString(this.state.getName(), (int) (this.getHeight()/20f), Color.WHITE, 0, -pixel(90));
+                pGraphics.drawCenteredString(this.state.getName(), (int) (this.getHeight()/20f), this.state.getMainColor(), 0, -pixel(90));
             }
         }
 
