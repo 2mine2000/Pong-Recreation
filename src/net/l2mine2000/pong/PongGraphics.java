@@ -11,6 +11,7 @@ public class PongGraphics {
     private final Color defaultColor;
     private final Font defaultFont;
     private final Stroke defaultStroke;
+    private float currentThickness = 1;
 
     private PongGraphics(Graphics2D pGraphics) {
         this.defaultColor = pGraphics.getColor();
@@ -64,15 +65,22 @@ public class PongGraphics {
     }
 
     public void drawSimpleButton(MenuButton pButton) {
-        this.drawSimpleButton(pButton, pButton.isActive());
+        this.drawSimpleButton(pButton, pButton.isActive() && Pong.getInstance().getCursor() != Pong.HIDDEN_CURSOR);
     }
 
     public void drawSimpleButton(MenuButton pButton, boolean pActiveRule) {
         this.setColor(new Color(pButton.getColor().getRed(), pButton.getColor().getGreen(), pButton.getColor().getBlue(), pButton.shouldBeBright()?(pActiveRule?45:60):(pActiveRule?20:25)));
         this.g.fill(pButton.getCollisionBox());
+        if (pButton.isSelected()) {
+            this.setColor(Color.WHITE);
+            this.setThickness(pButton.getThickness()+Pong.pixel(2));
+            this.g.drawRect((int) (pButton.getX()), (int) (pButton.getY()), pButton.getWidth(), pButton.getHeight());
+        }
+        this.setThickness(pButton.getThickness());
         if (pActiveRule) {
             this.drawShadowedRectangle(pButton.getCollisionBox(), pButton.getShadowColor(), pButton.getLightColor(), pButton.getLightSide());
         }else this.drawShadowedRectangle(pButton.getCollisionBox(), pButton.getLightColor(), pButton.getShadowColor(), pButton.getLightSide());
+        this.resetStroke();
     }
 
     public void drawShadowedRectangle(Rectangle pRectangle, Color pLight, Pong.DiagonalDirection pLightSide) {
@@ -205,7 +213,12 @@ public class PongGraphics {
     }
 
     public void setThickness(float pThickness) {
+        this.currentThickness = pThickness;
         this.setStroke(new BasicStroke(pThickness));
+    }
+
+    public float getThickness() {
+        return this.currentThickness;
     }
 
     public void setStroke(Stroke pStroke) {

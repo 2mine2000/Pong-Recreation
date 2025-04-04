@@ -15,8 +15,8 @@ public class PlayButton extends MenuButton{
     public static final HashMap<Integer, HashSet<Pong.State>> INDEXES = new HashMap<>();
     private boolean pressed = false;
 
-    protected PlayButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Function<Pong.State, Integer> pNextButton, Function<Pong.State, Integer> pPreviousButton, Pong.State... pAllowedStates) {
-        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pNextButton, pPreviousButton, pAllowedStates);
+    protected PlayButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pPreviousButton, pNextButton, pAllowedStates);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class PlayButton extends MenuButton{
         if (this.pressed && Pong.getInstance().fadeInCooldown <= 1) {
             this.pressed = false;
             switch (pPong.state) {
-                case SINGLEPLAYER_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.NORMAL, !((SwitchButton) pPong.buttons.get(8)).isSelectedSwitch());
+                case SINGLEPLAYER_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.BABY, !((SwitchButton) pPong.buttons.get(8)).isSelectedSwitch());
                 case SIMULATION_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.NORMAL, Player.AIDifficulty.NORMAL);
                 default -> pPong.setOrCreatePlayers();
             }
@@ -41,11 +41,11 @@ public class PlayButton extends MenuButton{
         }
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
-        register(new PlayButton(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pText, pFont, pAllowedStates), INDEXES);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        register(new PlayButton(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pText, pFont, pPreviousButton, pNextButton, pAllowedStates), INDEXES);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Pong.State... pAllowedStates) {
-        register(new PlayButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pAllowedStates), INDEXES);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        register(new PlayButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pPreviousButton, pNextButton, pAllowedStates), INDEXES);
     }
 }

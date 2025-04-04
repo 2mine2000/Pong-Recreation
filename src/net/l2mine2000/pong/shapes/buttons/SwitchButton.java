@@ -15,8 +15,8 @@ public class SwitchButton extends MenuButton {
     private LinkParameters link;
     private boolean isSelectedSwitch = false;
 
-    protected SwitchButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, String pText, Font pFont, Function<Pong.State, Integer> pNextButton, Function<Pong.State, Integer> pPreviousButton, Pong.State... pAllowedStates) {
-        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pNextButton, pPreviousButton, pAllowedStates);
+    protected SwitchButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pPreviousButton, pNextButton, pAllowedStates);
         this.isOnSwitch = pIsOnButton;
     }
 
@@ -34,11 +34,11 @@ public class SwitchButton extends MenuButton {
         if (this.isVisible(Pong.getInstance().state)) {
             pGraphics.setFont(Objects.requireNonNullElseGet(this.font, () -> new Font(pGraphics.getFont().getFontName(), Font.BOLD, (int) Pong.pixel(20))));
             FontMetrics metrics = pGraphics.g.getFontMetrics();
-            pGraphics.setThickness(this.thickness);
             if (this.isSelectedSwitch) {
-                pGraphics.setColor(new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue(), 45));
+                pGraphics.setColor(new Color(this.getColor().getRed(), this.getColor().getGreen(), this.getColor().getBlue(), 75));
                 pGraphics.g.fill(this.getCollisionBox());
             }
+            pGraphics.setThickness(this.thickness);
             pGraphics.drawSimpleButton(this, this.isSelectedSwitch);
             pGraphics.setColor(this.textColor);
             pGraphics.g.drawString(this.text, this.getCenterX() - metrics.stringWidth(this.text)/2f, this.getCenterY() + metrics.getHeight()/4f);
@@ -83,20 +83,20 @@ public class SwitchButton extends MenuButton {
         }else throw new RuntimeException("LinkParameters already defined for " + this);
     }
 
-    public static void create(int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, Font pFont, Pong.State... pAllowedStates) {
-        create(0, 0, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pIsOnButton ? "On" : "Off", pFont, pAllowedStates);
+    public static void create(int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        create(0, 0, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pIsOnButton ? "On" : "Off", pFont, pPreviousButton, pNextButton, pAllowedStates);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, Font pFont, Pong.State... pAllowedStates) {
-        create(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pIsOnButton ? "On" : "Off", pFont, pAllowedStates);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        create(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pIsOnButton ? "On" : "Off", pFont, pPreviousButton, pNextButton, pAllowedStates);
     }
 
-    public static void create(int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, String pText, Font pFont, Pong.State... pAllowedStates) {
-        create(0, 0, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pText, pFont, pAllowedStates);
+    public static void create(int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        create(0, 0, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pText, pFont, pPreviousButton, pNextButton, pAllowedStates);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, String pText, Font pFont, Pong.State... pAllowedStates) {
-        register(new SwitchButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pText, pFont, pAllowedStates), INDEXES);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, boolean pIsOnButton, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        register(new SwitchButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pIsOnButton, pText, pFont, pPreviousButton, pNextButton, pAllowedStates), INDEXES);
     }
 
     public static void link(SwitchButton pOnButton, SwitchButton pOffButton, boolean pStartOn, String pTitle, Font pTitleFont, float pCenterX, float pCenterY) {

@@ -12,22 +12,23 @@ public class StateSelectionButton extends MenuButton {
     private final Pong.State state;
     private boolean pressed = false;
 
-    protected StateSelectionButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Function<Pong.State, Integer> pNextButton, Function<Pong.State, Integer> pPreviousButton, Pong.State... pAllowedStates) {
-        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pNextButton, pPreviousButton, pAllowedStates);
+    protected StateSelectionButton(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pAllowedStates) {
+        super(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pText, pFont, pPreviousButton, pNextButton, pAllowedStates);
         this.state = pState;
     }
 
     @Override
     public void tick(Pong pPong) {
         super.tick(pPong);
-        if (this.pressed && Pong.getInstance().fadeInCooldown <= 1) {
+        if (this.pressed && pPong.fadeInCooldown <= 1) {
             this.pressed = false;
             switch (this.state) {
-                case MAIN_MENU -> Pong.getInstance().mainMenu();
-                case PLAYING -> Pong.getInstance().resume();
+                case MAIN_MENU -> pPong.mainMenu();
+                case PLAYING -> pPong.resume();
                 default -> {
-                    Pong.getInstance().setState(this.state);
-                    Pong.getInstance().setFadeInCooldown(Pong.TPS/3);
+                    pPong.setState(this.state);
+                    pPong.setFadeInCooldown(Pong.TPS/3);
+                    deselectAll();
                 }
             }
         }
@@ -36,7 +37,9 @@ public class StateSelectionButton extends MenuButton {
     @Override
     void run(Pong pPong) {
         if (!this.pressed) {
-            Pong.getInstance().setFadeInCooldown(Pong.TPS/3, true);
+            if (!this.state.is(Pong.State.PLAYING)) {
+                pPong.setFadeInCooldown(Pong.TPS/3, true);
+            }
             this.pressed = true;
         }
     }
@@ -45,23 +48,23 @@ public class StateSelectionButton extends MenuButton {
         return this.state;
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Pong.State... pStates) {
-        create(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pState, pText, pFont, pStates);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pStates) {
+        create(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pState, pText, pFont, pPreviousButton, pNextButton, pStates);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, Pong.State pState, Font pFont, Pong.State... pStates) {
-        create(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pState, pState.getName(), pFont, pStates);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Pong.DiagonalDirection pLightSide, Pong.State pState, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pStates) {
+        create(pX, pY, pWidth, pHeight, pColor, pColor, pLightSide, pState, pState.getName(), pFont, pPreviousButton, pNextButton, pStates);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, Font pFont, Pong.State... pStates) {
-        create(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pState, pState.getName(), pFont, pStates);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pStates) {
+        create(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pState, pState.getName(), pFont, pPreviousButton, pNextButton, pStates);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Pong.DiagonalDirection pLightSide, Pong.State pState, Font pFont, Pong.State... pStates) {
-        create(pX, pY, pWidth, pHeight, pState.getMainColor(), pState.getTextColor(), pLightSide, pState, pState.getName(), pFont, pStates);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Pong.DiagonalDirection pLightSide, Pong.State pState, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pStates) {
+        create(pX, pY, pWidth, pHeight, pState.getMainColor(), pState.getTextColor(), pLightSide, pState, pState.getName(), pFont, pPreviousButton, pNextButton, pStates);
     }
 
-    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Pong.State... pStates) {
-        register(new StateSelectionButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pState, pText, pFont, pStates), INDEXES);
+    public static void create(float pX, float pY, int pWidth, int pHeight, Color pColor, Color pTextColor, Pong.DiagonalDirection pLightSide, Pong.State pState, String pText, Font pFont, Function<Boolean, Integer> pPreviousButton, Function<Boolean, Integer> pNextButton, Pong.State... pStates) {
+        register(new StateSelectionButton(pX, pY, pWidth, pHeight, pColor, pTextColor, pLightSide, pState, pText, pFont, pPreviousButton, pNextButton, pStates), INDEXES);
     }
 }

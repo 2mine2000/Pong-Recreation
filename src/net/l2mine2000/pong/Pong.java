@@ -100,29 +100,47 @@ public class Pong extends JPanel implements Runnable {
     }
 
     private void registerButtons() {
-        //Play button 0
-        PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/4f*3f, (int) pixel(400), (int) pixel(90), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, "Play", new Font(FONT_NAME, Font.BOLD, (int) pixel(40)), State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
-        //<- Back button 1
-        StateSelectionButton.create(pixel(20), pixel(20), (int) pixel(100), (int) pixel(50), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, State.MAIN_MENU, "< Back", null, State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
-        //Resume button 2
-        StateSelectionButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(37.5f), (int) pixel(300), (int) pixel(75), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.PLAYING, "Resume", null, State.PAUSED);
-        //Main menu button 3
-        StateSelectionButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(125), (int) pixel(300), (int) pixel(75), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, State.MAIN_MENU, null, State.PAUSED);
+        //MultiStates :
 
+        //int PlayButton0_MultiState_s_MULTIPLAYER_MENU__SINGLEPLAYER_MENU__SIMULATION_MENU = 0;
+        //Play button 0 - MultiState(MULTIPLAYER_MENU, SINGLEPLAYER_MENU, SIMULATION_MENU)
+        PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/4f*3f, (int) pixel(400), (int) pixel(90), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, "Play", new Font(FONT_NAME, Font.BOLD, (int) pixel(40)),
+                (pV)-> switch (this.state) {
+                    case MULTIPLAYER_MENU -> 1;
+                    case SINGLEPLAYER_MENU -> pV ? 8 : 9;
+                    case SIMULATION_MENU -> 1;
+                    default -> 1;
+                }, (nV)->1, State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
+        //<- Back button 1 - MultiState
+        StateSelectionButton.create(pixel(20), pixel(20), (int) pixel(100), (int) pixel(50), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, State.MAIN_MENU, "< Back", null, (pV)->0, (nV)->switch (this.state) {
+            case MULTIPLAYER_MENU -> 0;
+            case SINGLEPLAYER_MENU -> 8;
+            case SIMULATION_MENU -> 0;
+            default -> 0;
+        }, State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
+
+        //SingleState :
         Font font = new Font(FONT_NAME, Font.BOLD, (int) pixel(35));
-        //Multiplayer mode button 4
-        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f - pixel(110), (int) pixel(400), (int) pixel(90), new Color(25, 255, 25), SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.MULTIPLAYER_MENU, font, State.MAIN_MENU);
-        //Singleplayer mode button 5
-        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f, (int) pixel(400), (int) pixel(90), Color.YELLOW, SLIGHTLY_YELLOW, DiagonalDirection.TOP_LEFT, State.SINGLEPLAYER_MENU, font, State.MAIN_MENU);
-        //Simulation mode button 6
-        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(110), (int) pixel(400), (int) pixel(90), new Color(75, 75, 255), SLIGHTLY_BLUE, DiagonalDirection.TOP_LEFT, State.SIMULATION_MENU, font, State.MAIN_MENU);
-        //Quit button 7
-        QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(220), (int) pixel(200), (int) pixel(75), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, "Quit", new Font(FONT_NAME, Font.BOLD, (int) pixel(30)), State.MAIN_MENU);
+        //Multiplayer mode button 2 - MAIN_MENU State
+        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f - pixel(110), (int) pixel(400), (int) pixel(90), new Color(25, 255, 25), SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.MULTIPLAYER_MENU, font, (pV)->5, (nV)->3, State.MAIN_MENU);
+        //Singleplayer mode button 3 - MAIN_MENU State
+        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f, (int) pixel(400), (int) pixel(90), Color.YELLOW, SLIGHTLY_YELLOW, DiagonalDirection.TOP_LEFT, State.SINGLEPLAYER_MENU, font, (pV)->2, (nV)->4, State.MAIN_MENU);
+        //Simulation mode button 4 - MAIN_MENU State
+        StateSelectionButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/2f + pixel(110), (int) pixel(400), (int) pixel(90), new Color(75, 75, 255), SLIGHTLY_BLUE, DiagonalDirection.TOP_LEFT, State.SIMULATION_MENU, font, (pV)->3, (nV)->5, State.MAIN_MENU);
+        //Quit button 5 - MAIN_MENU State
+        QuitButton.create(this.getWidth()/2f - pixel(100), this.getHeight()/2f + pixel(220), (int) pixel(200), (int) pixel(75), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, "Quit", new Font(FONT_NAME, Font.BOLD, (int) pixel(30)), (pV)->4, (nV)->2, State.MAIN_MENU);
 
-        //Reverse po with bros 8-9
+
+        //Resume button 6 - PAUSED State
+        StateSelectionButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(37.5f), (int) pixel(300), (int) pixel(75), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, State.PLAYING, "Resume", null, (pV)->7, (nV)->7, State.PAUSED);
+        //Main menu button 7 - PAUSED State
+        StateSelectionButton.create(this.getWidth()/2f - pixel(150), this.getHeight()/2f + pixel(125), (int) pixel(300), (int) pixel(75), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, State.MAIN_MENU, null, (pV)->6, (nV)->6, State.PAUSED);
+
         font = PongGraphics.setFontSize(font, (int) pixel(35));
-        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_RED, MenuButton.TEXT_RED, DiagonalDirection.TOP_LEFT, true, "Left", font, State.SINGLEPLAYER_MENU);
-        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_BLUE, MenuButton.TEXT_BLUE, DiagonalDirection.TOP_LEFT, false, "Right", font, State.SINGLEPLAYER_MENU);
+        //Playing side switch 8 - a_1/2 (ON) - SINGLEPLAYER_MENU State
+        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_RED, MenuButton.TEXT_RED, DiagonalDirection.TOP_LEFT, true, "Left", font, (pV)->1, (nV)->nV?0:9, State.SINGLEPLAYER_MENU);
+        //Playing side switch 9 - a_2/2 (OFF) - SINGLEPLAYER_MENU State
+        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_BLUE, MenuButton.TEXT_BLUE, DiagonalDirection.TOP_LEFT, false, "Right", font, (pV)->pV?1:8, (nV)->0, State.SINGLEPLAYER_MENU);
         SwitchButton.link((SwitchButton) this.buttons.get(8), (SwitchButton) this.buttons.get(9), true, "Your side :", PongGraphics.getMeanColor(MenuButton.TEXT_RED, MenuButton.TEXT_BLUE), font, this.getWidth()/2f, this.getHeight()/2f);
     }
 
@@ -229,7 +247,7 @@ public class Pong extends JPanel implements Runnable {
         PIXEL = this.getHeight() / 771f;
         WALL_THICKNESS = (int) pixel(5);
         if (!this.isMenuOpen()) {
-            this.moveMouse(this.getWidth()/2f, this.getHeight()/2f);
+            this.moveMouse(this.getWidth()/2f, this.getHeight()/2f-pixel(5));
         }
         if (!this.hasFocus()) {
             this.requestFocusInWindow();
@@ -319,6 +337,7 @@ public class Pong extends JPanel implements Runnable {
         if (this.state.is(State.PAUSED)) {
             this.setState(State.PLAYING);
             this.setCursor(HIDDEN_CURSOR);
+            MenuButton.deselectAll();
             return true;
         }return false;
     }
@@ -326,8 +345,9 @@ public class Pong extends JPanel implements Runnable {
     public boolean pause() {
         if (this.state.is(State.PLAYING)) {
             this.setState(State.PAUSED);
-            this.moveMouse(this.getWidth()/2f, this.getHeight()/2f);
+            this.moveMouse(this.getWidth()/2f, this.getHeight()/2f-pixel(5));
             this.setCursor(DEFAULT_CURSOR);
+            MenuButton.deselectAll();
             return true;
         }return false;
     }
@@ -337,6 +357,7 @@ public class Pong extends JPanel implements Runnable {
             this.setState(State.MAIN_MENU);
             this.setFadeInCooldown((int) (TPS*1.5f), false);
             this.ball = null;
+            MenuButton.deselectAll();
             return true;
         }return false;
     }
@@ -347,6 +368,7 @@ public class Pong extends JPanel implements Runnable {
             this.setState(State.PLAYING);
             this.setFadeInCooldown((int) (Pong.TPS*0.5f));
             this.setCursor(HIDDEN_CURSOR);
+            MenuButton.deselectAll();
             return true;
         }return false;
     }
@@ -473,6 +495,34 @@ public class Pong extends JPanel implements Runnable {
                 case SIMULATION_MENU -> MenuButton.TEXT_BLUE;
                 default -> Color.WHITE;
             };
+        }
+
+        public MenuButton getFirstButton() {
+            int index = switch (this) {
+                case MAIN_MENU -> 2;
+                case MULTIPLAYER_MENU -> 0;
+                case SINGLEPLAYER_MENU -> 8;
+                case SIMULATION_MENU -> 0;
+                case PAUSED -> 6;
+                default -> -1;
+            };
+            if (index < 0) {
+                throw new RuntimeException("State : " + this + ", is not a menu");
+            }return Pong.getInstance().buttons.get(index);
+        }
+
+        public MenuButton getLastButton() {
+            int index = switch (this) {
+                case MAIN_MENU -> 5;
+                case MULTIPLAYER_MENU -> 0;
+                case SINGLEPLAYER_MENU -> 0;
+                case SIMULATION_MENU -> 0;
+                case PAUSED -> 7;
+                default -> -1;
+            };
+            if (index < 0) {
+                throw new RuntimeException("State : " + this + ", is not a menu");
+            }return Pong.getInstance().buttons.get(index);
         }
     }
 }
