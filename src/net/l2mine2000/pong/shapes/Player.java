@@ -3,10 +3,12 @@ package net.l2mine2000.pong.shapes;
 import net.l2mine2000.pong.Direction;
 import net.l2mine2000.pong.Pong;
 import net.l2mine2000.pong.PongGraphics;
+import net.l2mine2000.pong.shapes.buttons.ColoredForButton;
 
 import java.awt.*;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Player extends Wall {
     private static final float SPEED = Pong.pixel(20);
@@ -213,19 +215,22 @@ public class Player extends Wall {
         Pong.getInstance().players.add(new Player(pX, (float) Pong.getInstance().getHeight() /2 - 75, pColor, pFrontSide, pIsUp, pIsDown));
     }
 
-    public enum AIDifficulty {
-        EMPTY((_)->0f, (_)->0f, 0f, (_)->0f),
-        BABY((height)->height/2f, (height)->height/20f, 500f, (defaultSpeed)->defaultSpeed*0.6f),
-        EASY((height)->height/4f, (height)->height*2f, 450f, (defaultSpeed)->defaultSpeed*0.8f),
-        NORMAL((height)->height/8f, Float::valueOf, 300f, (defaultSpeed)->defaultSpeed),
-        HARD((height)->height/16f, (height)->height/2f, 150f, (defaultSpeed)->defaultSpeed*1.2f),
-        IMPOSSIBLE((height)->height/100f, (_)->Pong.getInstance().ball.getHeight()+Pong.pixel(5), 0f, (defaultSpeed)->defaultSpeed/2 + Pong.getInstance().ball.getTotalSpeed()*0.9f);
+    public enum AIDifficulty implements ColoredForButton {
+        EMPTY("Empty", (_)->0f, (_)->0f, 0f, (_)->0f),
+        BABY("Super easy", (height)->height/2f, (height)->height/20f, 500f, (defaultSpeed)->defaultSpeed*0.6f),
+        EASY("Easy", (height)->height/4f, (height)->height*2f, 450f, (defaultSpeed)->defaultSpeed*0.8f),
+        NORMAL("Normal", (height)->height/8f, Float::valueOf, 300f, (defaultSpeed)->defaultSpeed),
+        HARD("Hard", (height)->height/16f, (height)->height/2f, 150f, (defaultSpeed)->defaultSpeed*1.2f),
+        IMPOSSIBLE("Super hard", (height)->height/100f, (_)->Pong.getInstance().ball.getHeight()+Pong.pixel(5), 0f, (defaultSpeed)->defaultSpeed/2 + Pong.getInstance().ball.getTotalSpeed()*0.9f);
 
+        private final String name;
         private final Function<Integer, Float> yDetectionRange;
         private final Function<Integer, Float> yRunAwayDistance;
         private final float focusDistancePixelRemoval;
         private final Function<Float, Float> genericSpeed;
-        AIDifficulty(Function<Integer, Float> pYDetectionRange, Function<Integer, Float> pYRunAwayDistance, float pFocusDistancePixelRemoval, Function<Float, Float> pGenericSpeed) {
+
+        AIDifficulty(String pName, Function<Integer, Float> pYDetectionRange, Function<Integer, Float> pYRunAwayDistance, float pFocusDistancePixelRemoval, Function<Float, Float> pGenericSpeed) {
+            this.name = pName;
             this.yDetectionRange = pYDetectionRange;
             this.yRunAwayDistance = pYRunAwayDistance;
             this.focusDistancePixelRemoval = pFocusDistancePixelRemoval;
@@ -246,6 +251,26 @@ public class Player extends Wall {
 
         public float getGenericSpeed() {
             return this.genericSpeed.apply(SPEED);
+        }
+
+        @Override
+        public String toString() {
+            return this.name;
+        }
+
+        @Override
+        public boolean useColor() {
+            return false;
+        }
+
+        @Override
+        public Color getMainColor() {
+            return null;
+        }
+
+        @Override
+        public Color getTextColor() {
+            return null;
         }
     }
 

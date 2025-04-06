@@ -3,11 +3,12 @@ package net.l2mine2000.pong.handlers;
 import net.l2mine2000.pong.Pong;
 import net.l2mine2000.pong.Tickable;
 import net.l2mine2000.pong.shapes.Player;
+import net.l2mine2000.pong.shapes.buttons.DropDownListButton;
 import net.l2mine2000.pong.shapes.buttons.MenuButton;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 import java.util.Objects;
 
 public class KeyHandler implements KeyListener, Tickable {
@@ -32,7 +33,12 @@ public class KeyHandler implements KeyListener, Tickable {
         if (pong.isMenuOpen()) {
             if (nextButton(keyCode)) {
                 if (!MenuButton.oneSelected()) {
-                    MenuButton button = Objects.requireNonNullElseGet(MenuButton.getButtonUnderMouse(), ()-> pong.state.getFirstButton());
+                    MenuButton button;
+                    try {
+                        button = MenuButton.getButtonsUnderMouse().getFirst();
+                    }catch (Exception ex) {
+                        button = pong.state.getFirstButton();
+                    }
                     if (button.isVisible()) {
                         pong.setCursor(Pong.HIDDEN_CURSOR);
                         MenuButton.deselectAll();
@@ -50,7 +56,12 @@ public class KeyHandler implements KeyListener, Tickable {
             }
             if (previousButton(keyCode)) {
                 if (!MenuButton.oneSelected()) {
-                    MenuButton button = Objects.requireNonNullElseGet(MenuButton.getButtonUnderMouse(), ()-> pong.state.getLastButton());
+                    MenuButton button;
+                    try {
+                        button = MenuButton.getButtonsUnderMouse().getLast();
+                    }catch (Exception ex) {
+                        button = pong.state.getLastButton();
+                    }
                     if (button.isVisible()) {
                         pong.setCursor(Pong.HIDDEN_CURSOR);
                         MenuButton.deselectAll();
@@ -70,7 +81,7 @@ public class KeyHandler implements KeyListener, Tickable {
             if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_SPACE) {
                 if (pong.fadeInCooldown <= 1) {
                     for (MenuButton button : pong.buttons) {
-                        if (button.isSelected() && button.isVisible()) {
+                        if (button.isSelected() && button.isVisible() && DropDownListButton.goodToGo(button)) {
                             pong.updateCursor(Pong.HIDDEN_CURSOR);
                             button.setActiveState(true);
                         }
@@ -123,7 +134,7 @@ public class KeyHandler implements KeyListener, Tickable {
 
         if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_SPACE) {
             for (MenuButton button : Pong.getInstance().buttons) {
-                if (button.isActive() && button.isVisible()) {
+                if (button.isActive() && button.isVisible() && DropDownListButton.goodToGo(button)) {
                     button.run();
                 }
             }

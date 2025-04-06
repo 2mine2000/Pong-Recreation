@@ -25,7 +25,7 @@ public class PlayButton extends MenuButton{
         if (this.pressed && Pong.getInstance().fadeInCooldown <= 1) {
             this.pressed = false;
             switch (pPong.state) {
-                case SINGLEPLAYER_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.BABY, !((SwitchButton) pPong.buttons.get(8)).isSelectedSwitch());
+                case SINGLEPLAYER_MENU -> pPong.setOrCreatePlayers((Player.AIDifficulty) ((DropDownListButton<?>) pPong.buttons.get(15)).getSelection(), !((SwitchButton) pPong.buttons.get(8)).isSelectedSwitch());
                 case SIMULATION_MENU -> pPong.setOrCreatePlayers(Player.AIDifficulty.NORMAL, Player.AIDifficulty.NORMAL);
                 default -> pPong.setOrCreatePlayers();
             }

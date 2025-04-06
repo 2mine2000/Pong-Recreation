@@ -6,6 +6,7 @@ import net.l2mine2000.pong.shapes.DynamicShape;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 
 public abstract class MenuButton extends DynamicShape {
@@ -81,6 +82,10 @@ public abstract class MenuButton extends DynamicShape {
         return this.text;
     }
 
+    public Font getFont() {
+        return this.font;
+    }
+
     public Color getTextColor() {
         return this.textColor;
     }
@@ -141,7 +146,18 @@ public abstract class MenuButton extends DynamicShape {
     }
 
     public boolean shouldBeBright() {
-        return this.selected || (this.isMouseOver() && Pong.getInstance().getCursor() != Pong.HIDDEN_CURSOR);
+        if (Pong.getInstance().inDropDownList && !DropDownListButton.goodToGo(this)) {
+            List<MenuButton> buttons = getButtonsUnderMouse();
+            boolean dropDownButton = false;
+            for (MenuButton button : buttons) {
+                if (DropDownListButton.goodToGo(button)) {
+                    dropDownButton = true;
+                    break;
+                }
+            }
+            return (this.selected || (this.isMouseOver() && Pong.getInstance().getCursor() != Pong.HIDDEN_CURSOR)) && !dropDownButton;
+        }
+        return (this.selected || (this.isMouseOver() && Pong.getInstance().getCursor() != Pong.HIDDEN_CURSOR));
     }
 
     public int getIndex() {
@@ -155,21 +171,35 @@ public abstract class MenuButton extends DynamicShape {
     }
 
     public void moveToNextButtonInMenu(boolean pVertical) {
-        MenuButton button = Pong.getInstance().buttons.get(this.nextInMenu.apply(pVertical));
+        MenuButton button = Pong.getInstance().buttons.get(this.getNextIndex(pVertical));
         if (button.isVisible()) {
             deselectAll();
             button.selected = true;
             Pong.getInstance().updateCursor(Pong.HIDDEN_CURSOR);
+            if (!(button instanceof DropDownListButton.SelectionButton<?>)) {
+                DropDownListButton.closeAll();
+            }
         }
     }
 
+    public int getNextIndex(boolean pVertical) {
+        return this.nextInMenu.apply(pVertical);
+    }
+
     public void moveToPreviousButtonInMenu(boolean pVertical) {
-        MenuButton button = Pong.getInstance().buttons.get(this.previousInMenu.apply(pVertical));
+        MenuButton button = Pong.getInstance().buttons.get(this.getPreviousIndex(pVertical));
         if (button.isVisible()) {
             deselectAll();
             button.selected = true;
             Pong.getInstance().updateCursor(Pong.HIDDEN_CURSOR);
+            if (!(button instanceof DropDownListButton.SelectionButton<?>)) {
+                DropDownListButton.closeAll();
+            }
         }
+    }
+
+    public int getPreviousIndex(boolean pVertical) {
+        return this.previousInMenu.apply(pVertical);
     }
 
     public static void deselectAll() {
@@ -186,12 +216,13 @@ public abstract class MenuButton extends DynamicShape {
         }return false;
     }
 
-    public static MenuButton getButtonUnderMouse() {
+    public static List<MenuButton> getButtonsUnderMouse() {
+        ArrayList<MenuButton> buttons = new ArrayList<>();
         for (MenuButton button : Pong.getInstance().buttons) {
             if (button.isVisible() && button.isMouseOver()) {
-                return button;
+                buttons.add(button);
             }
-        }return null;
+        }return buttons;
     }
 
     public static Color getLightEquivalent(Color pColor) {

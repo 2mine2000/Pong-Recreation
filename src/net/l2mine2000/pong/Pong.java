@@ -50,6 +50,8 @@ public class Pong extends JPanel implements Runnable {
     public boolean fadeReverse = false;
     private boolean leavingTheGame = false;
 
+    public boolean inDropDownList = false;
+
     private Pong() {
         try {
             this.robot = new Robot();
@@ -103,12 +105,11 @@ public class Pong extends JPanel implements Runnable {
     private void registerButtons() {
         //MultiStates :
 
-        //int PlayButton0_MultiState_s_MULTIPLAYER_MENU__SINGLEPLAYER_MENU__SIMULATION_MENU = 0;
         //Play button 0 - MultiState(MULTIPLAYER_MENU, SINGLEPLAYER_MENU, SIMULATION_MENU)
         PlayButton.create(this.getWidth()/2f - pixel(200), this.getHeight()/4f*3f, (int) pixel(400), (int) pixel(90), Color.GREEN, SLIGHTLY_GREEN, DiagonalDirection.TOP_LEFT, "Play", new Font(FONT_NAME, Font.BOLD, (int) pixel(40)),
                 (pV)-> switch (this.state) {
                     case MULTIPLAYER_MENU -> 1;
-                    case SINGLEPLAYER_MENU -> pV ? 8 : 9;
+                    case SINGLEPLAYER_MENU -> 15;
                     case SIMULATION_MENU -> 1;
                     default -> 1;
                 }, (nV)->1, State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
@@ -139,10 +140,13 @@ public class Pong extends JPanel implements Runnable {
 
         font = PongGraphics.setFontSize(font, (int) pixel(35));
         //Playing side switch 8 - a_1/2 (ON) - SINGLEPLAYER_MENU State
-        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_RED, MenuButton.TEXT_RED, DiagonalDirection.TOP_LEFT, true, "Left", font, (pV)->1, (nV)->nV?0:9, State.SINGLEPLAYER_MENU);
+        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_RED, MenuButton.TEXT_RED, DiagonalDirection.TOP_LEFT, true, "Left", null, (pV)->1, (nV)->nV?15:9, State.SINGLEPLAYER_MENU);
         //Playing side switch 9 - a_2/2 (OFF) - SINGLEPLAYER_MENU State
-        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_BLUE, MenuButton.TEXT_BLUE, DiagonalDirection.TOP_LEFT, false, "Right", font, (pV)->pV?1:8, (nV)->0, State.SINGLEPLAYER_MENU);
-        SwitchButton.link((SwitchButton) this.buttons.get(8), (SwitchButton) this.buttons.get(9), true, "Your side :", PongGraphics.getMeanColor(MenuButton.TEXT_RED, MenuButton.TEXT_BLUE), font, this.getWidth()/2f, this.getHeight()/2f);
+        SwitchButton.create((int) pixel(100), (int) pixel(50), MenuButton.MAIN_BLUE, MenuButton.TEXT_BLUE, DiagonalDirection.TOP_LEFT, false, "Right", null, (pV)->pV?1:8, (nV)->15, State.SINGLEPLAYER_MENU);
+        SwitchButton.link((SwitchButton) this.buttons.get(8), (SwitchButton) this.buttons.get(9), true, "Your side :", Color.WHITE, font, this.getWidth()/2f, this.getHeight()/2f-Pong.pixel(7));
+
+        //AI difficulty 15 (opt 10-14) - SINGLEPLAYER_MENU State
+        DropDownListButton.create(Player.AIDifficulty.class, (t)->!t.equals(Player.AIDifficulty.EMPTY), Player.AIDifficulty.NORMAL, (int) (this.getWidth()/2f + font.getSize()/2f), (int) (this.getHeight()/2f+pixel(43)), ((int) pixel(217)), ((int) pixel(50)), MenuButton.MAIN_GREEN, MenuButton.TEXT_GREEN, Color.WHITE, DiagonalDirection.TOP_LEFT, "Bot difficulty :", null, font, (pV)->pV?8:9, (nV)->0, State.SINGLEPLAYER_MENU);
     }
 
     public void start() {

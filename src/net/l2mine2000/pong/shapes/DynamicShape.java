@@ -49,7 +49,7 @@ public abstract class DynamicShape implements Tickable {
     }
 
     public boolean isVisible() {
-        return this.allowedStates.contains(Pong.getInstance().state);
+        return this.isVisible(Pong.getInstance().state);
     }
 
     public void relocate(float pX, float pY) {
