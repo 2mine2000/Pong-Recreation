@@ -165,7 +165,6 @@ public class DropDownListButton<T extends Enum<T>> extends MenuButton {
         void run(Pong pPong) {
             this.list.close();
             this.list.selection = this.value;
-            this.list.setSelected(true);
         }
 
         @Override
@@ -175,6 +174,10 @@ public class DropDownListButton<T extends Enum<T>> extends MenuButton {
 
         public T getValue() {
             return this.value;
+        }
+
+        public DropDownListButton<T> getList() {
+            return this.list;
         }
 
         @Override

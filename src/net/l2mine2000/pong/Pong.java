@@ -110,14 +110,14 @@ public class Pong extends JPanel implements Runnable {
                 (pV)-> switch (this.state) {
                     case MULTIPLAYER_MENU -> 1;
                     case SINGLEPLAYER_MENU -> 15;
-                    case SIMULATION_MENU -> 1;
+                    case SIMULATION_MENU -> 21;
                     default -> 1;
                 }, (nV)->1, State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
         //<- Back button 1 - MultiState
         StateSelectionButton.create(pixel(20), pixel(20), (int) pixel(100), (int) pixel(50), Color.RED, SLIGHTLY_RED, DiagonalDirection.TOP_LEFT, State.MAIN_MENU, "< Back", null, (pV)->0, (nV)->switch (this.state) {
             case MULTIPLAYER_MENU -> 0;
             case SINGLEPLAYER_MENU -> 8;
-            case SIMULATION_MENU -> 0;
+            case SIMULATION_MENU -> 27;
             default -> 0;
         }, State.MULTIPLAYER_MENU, State.SINGLEPLAYER_MENU, State.SIMULATION_MENU);
 
@@ -147,6 +147,10 @@ public class Pong extends JPanel implements Runnable {
 
         //AI difficulty 15 (opt 10-14) - SINGLEPLAYER_MENU State
         DropDownListButton.create(Player.AIDifficulty.class, (t)->!t.equals(Player.AIDifficulty.EMPTY), Player.AIDifficulty.NORMAL, (int) (this.getWidth()/2f + font.getSize()/2f), (int) (this.getHeight()/2f+pixel(43)), ((int) pixel(217)), ((int) pixel(50)), MenuButton.MAIN_GREEN, MenuButton.TEXT_GREEN, Color.WHITE, DiagonalDirection.TOP_LEFT, "Bot difficulty :", null, font, (pV)->pV?8:9, (nV)->0, State.SINGLEPLAYER_MENU);
+        //AI difficulty 21 (opt 16-20) - Right bot - SIMULATION_MENU State
+        DropDownListButton.create(Player.AIDifficulty.class, (t)->!t.equals(Player.AIDifficulty.EMPTY), Player.AIDifficulty.NORMAL, (int) (this.getWidth()/2f + font.getSize()/2f), (int) (this.getHeight()/2f+pixel(43)), ((int) pixel(217)), ((int) pixel(50)), MenuButton.MAIN_BLUE, MenuButton.TEXT_BLUE, Color.WHITE, DiagonalDirection.TOP_LEFT, "Right bot level :", null, font, (pV)->27, (nV)->0, State.SIMULATION_MENU);
+        //AI difficulty 27 (opt 22-26) - Left bot - SIMULATION_MENU State
+        DropDownListButton.create(Player.AIDifficulty.class, (t)->!t.equals(Player.AIDifficulty.EMPTY), Player.AIDifficulty.NORMAL, (int) (this.getWidth()/2f + font.getSize()/2f), (int) (this.getHeight()/2f-Pong.pixel(32)), ((int) pixel(217)), ((int) pixel(50)), MenuButton.MAIN_RED, MenuButton.TEXT_RED, Color.WHITE, DiagonalDirection.TOP_LEFT, "Left bot level :", null, font, (pV)->1, (nV)->21, State.SIMULATION_MENU);
     }
 
     public void start() {
@@ -210,6 +214,11 @@ public class Pong extends JPanel implements Runnable {
             if (!this.state.is(State.MAIN_MENU)) {
                 pGraphics.drawCenteredString(this.state.getName(), (int) (this.getHeight()/20f), this.state.getMainColor(), 0, -pixel(90));
             }
+        }
+
+        if (this.state.is(State.MULTIPLAYER_MENU)) {
+            pGraphics.drawCenteredString("No parameters for Multiplayer mode", (int) pixel(35), Color.WHITE, 0, pixel(50));
+            //pGraphics.g.drawString("No parameters for Multiplayer mode", this.getWidth()/2f-metrics.stringWidth("No parameters for Multiplayer mode")/2f, 0);
         }
 
         pGraphics.drawFading();
@@ -509,7 +518,7 @@ public class Pong extends JPanel implements Runnable {
                 case MAIN_MENU -> 2;
                 case MULTIPLAYER_MENU -> 0;
                 case SINGLEPLAYER_MENU -> 8;
-                case SIMULATION_MENU -> 0;
+                case SIMULATION_MENU -> 27;
                 case PAUSED -> 6;
                 default -> -1;
             };
@@ -521,9 +530,7 @@ public class Pong extends JPanel implements Runnable {
         public MenuButton getLastButton() {
             int index = switch (this) {
                 case MAIN_MENU -> 5;
-                case MULTIPLAYER_MENU -> 0;
-                case SINGLEPLAYER_MENU -> 0;
-                case SIMULATION_MENU -> 0;
+                case MULTIPLAYER_MENU, SIMULATION_MENU, SINGLEPLAYER_MENU -> 0;
                 case PAUSED -> 7;
                 default -> -1;
             };

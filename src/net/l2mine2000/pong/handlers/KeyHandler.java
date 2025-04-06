@@ -136,6 +136,9 @@ public class KeyHandler implements KeyListener, Tickable {
             for (MenuButton button : Pong.getInstance().buttons) {
                 if (button.isActive() && button.isVisible() && DropDownListButton.goodToGo(button)) {
                     button.run();
+                    if (button instanceof DropDownListButton.SelectionButton<?> selectionButton) {
+                        selectionButton.getList().setSelected(true);
+                    }
                 }
             }
         }
